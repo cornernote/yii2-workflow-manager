@@ -52,15 +52,15 @@ $config = [
 ## License
 
 - Author: Brett O'Donnell <cornernote@gmail.com>
-- Source Code: https://github.com/cornernote/yii2-return-url
+- Source Code: https://github.com/cornernote/yii2-workflow-manager
 - Copyright © 2015 Mr PHP <info@mrphp.com.au>
-- License: BSD-3-Clause https://raw.github.com/cornernote/yii2-return-url/master/LICENSE
+- License: BSD-3-Clause https://raw.github.com/cornernote/yii2-workflow-manager/master/LICENSE
 
 
 ## Links
 
-- [Yii2 Extension](http://www.yiiframework.com/extension/yii2-return-url)
-- [Composer Package](https://packagist.org/packages/cornernote/yii2-return-url)
+- [Yii2 Extension](http://www.yiiframework.com/extension/yii2-workflow-manager)
+- [Composer Package](https://packagist.org/packages/cornernote/yii2-workflow-manager)
 - [MrPHP](http://mrphp.com.au)
 
 
