@@ -1,0 +1,26 @@
+{
+    "name": "cornernote/yii2-workflow-manager",
+    "description": "Workflow Manager for Yii2.",
+    "keywords": ["yii2", "workflow"],
+    "type": "yii2-extension",
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Brett O'Donnell",
+            "email": "cornernote@gmail.com",
+            "homepage": "http://mrphp.com.au/"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "*",
+        "raoul2000/yii2-workflow": "*",
+        "raoul2000/yii2-workflow-view": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.*",
+        "scrutinizer/ocular": "~1.1"
+    },
+    "autoload": {
+        "psr-4": {"cornernote\\workflow\\manager\\": "src"}
+    }    
+}
