@@ -62,20 +62,6 @@ class StatusController extends Controller
     }
 
     /**
-     * Sets the sort order of Status models.
-     */
-    public function actionSort()
-    {
-        if (Yii::$app->request->post('Status')) {
-            foreach (Yii::$app->request->post('Status') as $k => $id) {
-                $model = Status::findOne($id);
-                $model->sort_order = $k;
-                $model->save(false);
-            }
-        }
-    }
-
-    /**
      * Finds the Status model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param string $id

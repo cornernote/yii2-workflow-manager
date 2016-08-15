@@ -25,7 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= Html::a('<span class="glyphicon glyphicon-pencil"></span> ' . Yii::t('workflow', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-info']) ?>
             <?= Html::a('<span class="glyphicon glyphicon-trash"></span> ' . Yii::t('workflow', 'Delete'), ['delete', 'id' => $model->id], [
                 'class' => 'btn btn-danger',
-                'data-confirm' => '' . Yii::t('workflow', 'Are you sure?') . '',
+                'data-confirm' => Yii::t('workflow', 'Are you sure?'),
                 'data-method' => 'post',
             ]) ?>
         </div>
@@ -77,7 +77,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'update' => new JsExpression("function(event, ui){
                                     $.ajax({
                                         type: 'POST',
-                                        url: '" . Url::to(['status/sort']) . "',
+                                        url: '" . Url::to(['sort', 'id' => $model->id]) . "',
                                         data: $(event.target).sortable('serialize') + '&_csrf=" . Yii::$app->request->getCsrfToken() . "',
                                         success: function() {
                                             location.reload();
@@ -97,7 +97,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'workflow' => Yii::$app->workflowSource->getWorkflow($model->id),
                 'containerId' => 'workflowView'
             ]) ?>
-            <div id="workflowView"></div>
+            <div id="workflowView" style="height: 400px;"></div>
         </div>
     </div>
 

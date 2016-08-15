@@ -80,15 +80,15 @@ class Status extends ActiveRecord
     /**
      * @inheritdoc
      */
-    public function beforeDelete()
+    public function beforeSave($insert)
     {
-        foreach ($this->startTransitions as $startTransition) {
-            $startTransition->delete();
+        if ($insert) {
+            if ($this->sort_order === null) {
+                $lowest = static::find()->andWhere(['workflow_id' => $this->workflow_id])->orderBy(['sort_order' => SORT_DESC])->one();
+                $this->sort_order = $lowest ? $lowest->sort_order + 1 : 1;
+            }
         }
-        foreach ($this->endTransitions as $endTransition) {
-            $endTransition->delete();
-        }
-        return parent::beforeDelete();
+        return parent::beforeSave($insert);
     }
 
     /**
@@ -101,6 +101,20 @@ class Status extends ActiveRecord
             $this->workflow->save(false, ['initial_status_id']);
         }
         parent::afterSave($insert, $changedAttributes);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function beforeDelete()
+    {
+        foreach ($this->startTransitions as $startTransition) {
+            $startTransition->delete();
+        }
+        foreach ($this->endTransitions as $endTransition) {
+            $endTransition->delete();
+        }
+        return parent::beforeDelete();
     }
 
 }

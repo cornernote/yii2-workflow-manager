@@ -2,6 +2,7 @@
 
 namespace cornernote\workflow\manager\controllers;
 
+use cornernote\workflow\manager\models\Status;
 use cornernote\workflow\manager\models\Transition;
 use cornernote\workflow\manager\models\Workflow;
 use Yii;
@@ -26,8 +27,7 @@ class DefaultController extends Controller
     /**
      * Displays a single Workflow model.
      * @param string $id
-     *
-     * @return mixed
+     * @return \yii\web\Response
      */
     public function actionView($id)
     {
@@ -64,7 +64,7 @@ class DefaultController extends Controller
     /**
      * Creates a new Workflow model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @return \yii\web\Response
      */
     public function actionCreate()
     {
@@ -79,7 +79,7 @@ class DefaultController extends Controller
      * Updates an existing Workflow model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $id
-     * @return mixed
+     * @return \yii\web\Response
      */
     public function actionUpdate($id)
     {
@@ -105,6 +105,25 @@ class DefaultController extends Controller
         $model->initial_status_id = $status_id;
         $model->save(false, ['initial_status_id']);
         return $this->redirect(['view', 'id' => $model->id]);
+    }
+
+    /**
+     * Sets the sort order of Status models.
+     * @param $id
+     * @throws HttpException
+     */
+    public function actionSort($id)
+    {
+        $model = $this->findModel($id);
+        if (Yii::$app->request->post('Status')) {
+            foreach (Yii::$app->request->post('Status') as $k => $id) {
+                $status = Status::findOne(['id' => $id, 'workflow_id' => $model->id]);
+                if ($status) {
+                    $status->sort_order = $k;
+                    $status->save(false);
+                }
+            }
+        }
     }
 
     /**

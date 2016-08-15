@@ -73,7 +73,7 @@ class WorkflowDbSource extends Object implements IWorkflowSource
                 'class' => 'raoul2000\workflow\base\Status',
                 'id' => $canonicalStId,
                 'workflowId' => $statusModel->workflow_id,
-                'label' => isset($statusModel->label) ? $statusModel->label : Inflector::camel2words($stId, true),
+                'label' => $statusModel->label ? $statusModel->label : Inflector::camel2words($stId, true),
                 'source' => $this
             ]);
         }
