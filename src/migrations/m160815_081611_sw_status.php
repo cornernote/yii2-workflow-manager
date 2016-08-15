@@ -20,4 +20,5 @@ class m160815_081611_sw_status extends Migration
     {
         $this->dropTable('{{%sw_status}}');
     }
+    
 }

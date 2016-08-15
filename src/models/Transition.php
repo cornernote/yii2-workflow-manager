@@ -8,9 +8,9 @@ use yii\db\ActiveRecord;
 /**
  * This is the model class for table "sw_transition".
  *
- * @property integer $workflow_id
- * @property integer $start_status_id
- * @property integer $end_status_id
+ * @property string $workflow_id
+ * @property string $start_status_id
+ * @property string $end_status_id
  *
  * @property Status $endStatus
  * @property Status $startStatus

@@ -20,4 +20,5 @@ class m160815_081613_sw_workflow extends Migration
         $this->dropIndex('initial_status_id', '{{%sw_workflow}}');
         $this->dropTable('{{%sw_workflow}}');
     }
+    
 }

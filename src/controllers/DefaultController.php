@@ -17,7 +17,7 @@ class DefaultController extends Controller
 {
     /**
      * Lists all Workflow models.
-     * @return mixed
+     * @return \yii\web\Response
      */
     public function actionIndex()
     {
@@ -130,7 +130,7 @@ class DefaultController extends Controller
      * Deletes an existing Workflow model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param string $id
-     * @return mixed
+     * @return \yii\web\Response
      */
     public function actionDelete($id)
     {

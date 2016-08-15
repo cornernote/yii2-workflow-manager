@@ -15,6 +15,7 @@ use yii\base\InvalidConfigException;
 use yii\base\Object;
 use yii\caching\Cache;
 use yii\db\BaseActiveRecord;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Inflector;
 use yii\helpers\VarDumper;
 
@@ -171,7 +172,8 @@ class WorkflowDbSource extends Object implements IWorkflowSource
                 'id' => $canonicalStId,
                 'workflowId' => $statusModel->workflow_id,
                 'label' => $statusModel->label ? $statusModel->label : Inflector::camel2words($stId, true),
-                'source' => $this
+                'source' => $this,
+                'metadata' => ArrayHelper::map($statusModel->metadatas, 'key', 'value'),
             ]);
         }
         return $this->_s[$canonicalStId];
@@ -185,18 +187,20 @@ class WorkflowDbSource extends Object implements IWorkflowSource
     {
         if (!$this->_allStatusLoaded) {
             $loadedStatusIds = array_keys($this->_s);
+            /** @var \cornernote\workflow\manager\models\Status[] $statusModels */
             $statusModels = \cornernote\workflow\manager\models\Status::find()
                 ->where(['workflow_id' => $workflowId])
                 ->andWhere(['NOT IN', 'id', $loadedStatusIds])
                 ->all();
-            foreach ($statusModels as $status) {
-                $canonicalStId = $workflowId . self::SEPARATOR_STATUS_NAME . $status->id;
+            foreach ($statusModels as $statusModel) {
+                $canonicalStId = $workflowId . self::SEPARATOR_STATUS_NAME . $statusModel->id;
                 $this->_s[$canonicalStId] = Yii::createObject([
-                    'class' => 'raoul2000\workflow\base\Status',
+                    'class' => $this->getClassMapByType(self::TYPE_STATUS),
                     'id' => $canonicalStId,
                     'workflowId' => $workflowId,
-                    'label' => $status->label ? $status->label : Inflector::camel2words($status->id, true),
-                    'source' => $this
+                    'label' => $statusModel->label ? $statusModel->label : Inflector::camel2words($statusModel->id, true),
+                    'source' => $this,
+                    'metadata' => ArrayHelper::map($statusModel->metadatas, 'key', 'value'),
                 ]);
             }
             $this->_allStatusLoaded = true;

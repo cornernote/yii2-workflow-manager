@@ -8,8 +8,8 @@ use yii\db\ActiveRecord;
 /**
  * This is the model class for table "sw_workflow".
  *
- * @property integer $id
- * @property integer $initial_status_id
+ * @property string $id
+ * @property string $initial_status_id
  *
  * @property Status[] $statuses
  * @property Status $initialStatus

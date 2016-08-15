@@ -1,22 +1,19 @@
 <?php
-
-use app\models\Workflow;
-use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
-
 /**
  * @var yii\web\View $this
- * @var Workflow $model
- * @var yii\widgets\ActiveForm $form
+ * @var cornernote\workflow\manager\models\Workflow $model
+ * @var ActiveForm $form
  */
 
+use yii\helpers\Html;
+use yii\bootstrap\ActiveForm;
 ?>
 
 <div class="workflow-default-form">
 
     <?php $form = ActiveForm::begin([
         'id' => 'Workflow',
-        'enableClientValidation' => true,
+        'enableClientValidation' => false,
         'errorSummaryCssClass' => 'error-summary alert alert-error'
     ]) ?>
 

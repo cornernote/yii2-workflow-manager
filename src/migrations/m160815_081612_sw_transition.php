@@ -25,4 +25,5 @@ class m160815_081612_sw_transition extends Migration
         $this->dropIndex('end_status_id', '{{%sw_transition}}');
         $this->dropTable('{{%sw_transition}}');
     }
+    
 }

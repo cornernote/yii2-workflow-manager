@@ -8,14 +8,15 @@ use yii\db\ActiveRecord;
 /**
  * This is the model class for table "sw_status".
  *
- * @property integer $id
- * @property integer $workflow_id
+ * @property string $id
+ * @property string $workflow_id
  * @property string $label
  * @property integer $sort_order
  *
  * @property Workflow $workflow
  * @property Transition[] $startTransitions
  * @property Transition[] $endTransitions
+ * @property Metadata[] $metadatas
  */
 class Status extends ActiveRecord
 {
@@ -75,6 +76,14 @@ class Status extends ActiveRecord
     public function getEndTransitions()
     {
         return $this->hasMany(Transition::className(), ['end_status_id' => 'id'])->andWhere(['workflow_id' => $this->workflow_id]);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMetadatas()
+    {
+        return $this->hasMany(Metadata::className(), ['status_id' => 'id'])->andWhere(['workflow_id' => $this->workflow_id]);
     }
 
     /**

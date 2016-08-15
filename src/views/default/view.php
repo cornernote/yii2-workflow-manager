@@ -1,18 +1,19 @@
 <?php
+/**
+ * @var yii\web\View $this
+ * @var cornernote\workflow\manager\models\Workflow $model
+ */
 
 use cornernote\workflow\manager\models\Transition;
 use dmstr\helpers\Html;
 use raoul2000\workflow\view\WorkflowViewWidget;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
+use yii\helpers\VarDumper;
 use yii\jui\Sortable;
 use yii\web\JsExpression;
 use yii\widgets\DetailView;
 
-/**
- * @var yii\web\View $this
- * @var cornernote\workflow\manager\models\Workflow $model
- */
 $this->title = $model->id;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('workflow', 'Workflow'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
@@ -41,15 +42,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 if ($model->initial_status_id != $status->id) {
                     $actions[] = Html::a('<span class="glyphicon glyphicon-star"></span>', ['initial', 'id' => $model->id, 'status_id' => $status->id], ['title' => Yii::t('workflow', 'Set Initial')]);
                 }
-                $actions[] = Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['status/update', 'id' => $status->id], ['title' => Yii::t('workflow', 'Update')]);
-                $actions[] = Html::a('<span class="glyphicon glyphicon-trash"></span>', ['status/delete', 'id' => $status->id], [
+                $actions[] = Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['status/update', 'id' => $status->id, 'workflow_id' => $status->workflow_id], ['title' => Yii::t('workflow', 'Update')]);
+                $actions[] = Html::a('<span class="glyphicon glyphicon-trash"></span>', ['status/delete', 'id' => $status->id, 'workflow_id' => $status->workflow_id], [
                     'title' => Yii::t('workflow', 'Delete'),
-                    'data-confirm' => '' . Yii::t('workflow', 'Are you sure?') . '',
+                    'data-confirm' => Yii::t('workflow', 'Are you sure?'),
                     'data-method' => 'post',
                 ]);
-                $transitions = $status->startTransitions ? '<br><small><span class="glyphicon glyphicon-chevron-right"></span> ' . implode(', ', ArrayHelper::map($status->startTransitions, 'end_status_id', 'end_status_id')) . '</small>' : '';
+                $transitions = $status->startTransitions ? '<br><small><span class="glyphicon glyphicon-chevron-right"></span>&nbsp; &nbsp;' . implode(', ', ArrayHelper::map($status->startTransitions, 'end_status_id', 'end_status_id')) . '</small>' : '';
+                $metadatas = $status->metadatas ? '<br><small><span class="glyphicon glyphicon-tags"></span>&nbsp; &nbsp;' . VarDumper::dumpAsString(ArrayHelper::map($status->metadatas, 'key', 'value')) . '</small>' : '';
                 $sortables[] = [
-                    'content' => '<div class="pull-right">' . implode(' ', $actions) . '</div>' . $status->id . $transitions,
+                    'content' => '<div class="pull-right">' . implode(' ', $actions) . '</div>' . $status->id . $transitions . $metadatas,
                     'options' => [
                         'id' => 'Status_' . $status->id,
                         'class' => 'list-group-item',

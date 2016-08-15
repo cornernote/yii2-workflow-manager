@@ -1,15 +1,14 @@
 <?php
-use cornernote\workflow\manager\models\Workflow;
-use yii\bootstrap\Nav;
-use yii\helpers\Html;
-
 /*
  * @var yii\web\View $this
  */
 
+use cornernote\workflow\manager\models\Workflow;
+use yii\bootstrap\Nav;
+use yii\helpers\Html;
+
 $this->title = Yii::t('workflow', 'Workflow');
 $this->params['breadcrumbs'][] = $this->title;
-
 ?>
 <div class="workflow-default-index">
 
