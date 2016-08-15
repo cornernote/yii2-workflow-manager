@@ -1,6 +1,7 @@
 <?php
 namespace cornernote\workflow\manager\components;
 
+use raoul2000\workflow\base\SimpleWorkflowBehavior;
 use raoul2000\workflow\base\Status;
 use raoul2000\workflow\base\StatusInterface;
 use raoul2000\workflow\base\Transition;
@@ -12,7 +13,10 @@ use raoul2000\workflow\source\IWorkflowSource;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\base\Object;
+use yii\caching\Cache;
+use yii\db\BaseActiveRecord;
 use yii\helpers\Inflector;
+use yii\helpers\VarDumper;
 
 /**
  * WorkflowDbSource component is dedicated to read workflow definition from DB.
@@ -30,25 +34,119 @@ use yii\helpers\Inflector;
 class WorkflowDbSource extends Object implements IWorkflowSource
 {
     /**
-     *
+     *    The regular expression used to validate status and workflow Ids.
+     */
+    const PATTERN_ID = '/^[a-zA-Z]+[[:alnum:]-]*$/';
+
+    /**
+     * The separator used to create a status id by concatenating the workflow id and
+     * the status local id (e.g. post/draft).
      */
     const SEPARATOR_STATUS_NAME = '/';
+
+    /**
+     * Name of the array key for status list definition
+     */
+    const KEY_NODES = 'status';
+
+    /**
+     * array key for status class in class map
+     */
+    const TYPE_STATUS = 'status';
+
+    /**
+     * array key for transition class in class map
+     */
+    const TYPE_TRANSITION = 'transition';
+
+    /**
+     * array key for workflow class in class map
+     */
+    const TYPE_WORKFLOW = 'workflow';
+
+    /**
+     *
+     * @var string|array|Cache The workflow definition cache used by this
+     * source component can be be specified in one of the following forms :
+     *
+     * - string : ID of an existing cache component registered in the current Yii::$app.
+     * - a configuration array: the array must contain a class element which is treated as the object class,
+     * and the rest of the name-value pairs will be used to initialize the corresponding object properties
+     * - object : the instance of the cache component
+     *
+     * By default no cache is used.
+     */
+    public $definitionCache;
+
+    /**
+     * @var array list of all workflow definition indexed by workflow id
+     */
+    private $_workflowDef = [];
+
     /**
      * @var Workflow[] list of workflow instances indexed by workflow id
      */
     private $_w = [];
+
     /**
      * @var Status[] list status instances indexed by their id
      */
     private $_s = [];
-    /**
-     * @var bool
-     */
-    private $_allStatusLoaded = false;
+
     /**
      * @var Transition[] list of out-going Transition instances indexed by the start status id
      */
     private $_t = [];
+
+    /**
+     * @var object workflow definition cache
+     */
+    private $_dc;
+
+    /**
+     * The class map is used to allow the use of alternate classes to implement built-in types. This way
+     * you can provide your own implementation for status, transition or workflow.
+     * The class map can be configured when this component is created but can't be modified afterwards.
+     *
+     * @var array
+     */
+    private $_classMap = [
+        self::TYPE_WORKFLOW => 'raoul2000\workflow\base\Workflow',
+        self::TYPE_STATUS => 'raoul2000\workflow\base\Status',
+        self::TYPE_TRANSITION => 'raoul2000\workflow\base\Transition'
+    ];
+
+    /**
+     * @var bool
+     */
+    private $_allStatusLoaded = false;
+
+    /**
+     * Constructor method.
+     *
+     * @param array $config
+     * @throws InvalidConfigException
+     */
+    public function __construct($config = [])
+    {
+        if (array_key_exists('classMap', $config)) {
+            if (is_array($config['classMap']) && count($config['classMap']) != 0) {
+                $this->_classMap = array_merge($this->_classMap, $config['classMap']);
+                unset($config['classMap']);
+                // classmap validation
+                foreach ([self::TYPE_STATUS, self::TYPE_TRANSITION, self::TYPE_WORKFLOW] as $type) {
+                    $className = $this->getClassMapByType($type);
+                    if (empty($className)) {
+                        throw new InvalidConfigException("Invalid class map value : missing class for type " . $type);
+                    }
+                }
+            } else {
+                throw new InvalidConfigException("Invalid property type : 'classMap' must be a non-empty array");
+            }
+        }
+
+        parent::__construct($config);
+    }
 
     /**
      * @param mixed $id
@@ -60,7 +158,6 @@ class WorkflowDbSource extends Object implements IWorkflowSource
     {
         list($wId, $stId) = $this->parseStatusId($id);
         $canonicalStId = $wId . self::SEPARATOR_STATUS_NAME . $stId;
-        // TODO : implement status class map
         if (!array_key_exists($canonicalStId, $this->_s)) {
             $statusModel = \cornernote\workflow\manager\models\Status::findOne([
                 'workflow_id' => $wId,
@@ -70,7 +167,7 @@ class WorkflowDbSource extends Object implements IWorkflowSource
                 throw new WorkflowException('No status found with id ' . $id);
             }
             $this->_s[$canonicalStId] = Yii::createObject([
-                'class' => 'raoul2000\workflow\base\Status',
+                'class' => $this->getClassMapByType(self::TYPE_STATUS),
                 'id' => $canonicalStId,
                 'workflowId' => $statusModel->workflow_id,
                 'label' => $statusModel->label ? $statusModel->label : Inflector::camel2words($stId, true),
@@ -115,24 +212,24 @@ class WorkflowDbSource extends Object implements IWorkflowSource
      */
     public function getTransitions($statusId, $model = null)
     {
-        list($wId, $stId) = $this->parseStatusId($statusId);
+        list($wId, $stId) = $this->parseStatusId($statusId, $model);
+        $statusId = $wId . self::SEPARATOR_STATUS_NAME . $stId;
         if (!array_key_exists($statusId, $this->_t)) {
-            $transInstance = [];
-            $transitions = \cornernote\workflow\manager\models\Transition::findAll([
+            $transitions = [];
+            $transitionModels = \cornernote\workflow\manager\models\Transition::findAll([
                 'workflow_id' => $wId,
                 'start_status_id' => $stId,
             ]);
-            foreach ($transitions as $transition) {
-                // TODO : implement transition class map
+            foreach ($transitionModels as $transition) {
                 $endId = $wId . self::SEPARATOR_STATUS_NAME . $transition->end_status_id;
-                $transInstance[] = Yii::createObject([
-                    'class' => 'raoul2000\workflow\base\Transition',
+                $transitions[] = Yii::createObject([
+                    'class' => $this->getClassMapByType(self::TYPE_TRANSITION),
                     'start' => $this->getStatus($statusId),
                     'end' => $this->getStatus($endId),
                     'source' => $this
                 ]);
             }
-            $this->_t[$statusId] = $transInstance;
+            $this->_t[$statusId] = $transitions;
         }
         return $this->_t[$statusId];
     }
@@ -163,31 +260,199 @@ class WorkflowDbSource extends Object implements IWorkflowSource
      */
     public function getWorkflow($id)
     {
-        // TODO : validate that initial status is valid
-        // TODO : implement status class map
         if (!array_key_exists($id, $this->_w)) {
-            $workflowModel = \cornernote\workflow\manager\models\Workflow::findOne(['id' => $id]);
-            if (!$workflowModel) {
-                throw new WorkflowException('No workflow found with id ' . $id);
+            $workflow = null;
+            $def = $this->getWorkflowDefinition($id);
+            if ($def != null) {
+                unset($def[self::KEY_NODES]);
+                $def['id'] = $id;
+                if (isset($def[Workflow::PARAM_INITIAL_STATUS_ID])) {
+                    $ids = $this->parseStatusId($def[Workflow::PARAM_INITIAL_STATUS_ID], $id);
+                    $def[Workflow::PARAM_INITIAL_STATUS_ID] = implode(self::SEPARATOR_STATUS_NAME, $ids);
+                } else {
+                    throw new WorkflowException('failed to load Workflow ' . $id . ' : missing initial status id');
+                }
+                $def['class'] = $this->getClassMapByType(self::TYPE_WORKFLOW);
+                $def['source'] = $this;
+                $workflow = Yii::createObject($def);
             }
-            $this->_w[$id] = Yii::createObject([
-                'class' => 'raoul2000\workflow\base\Workflow',
-                'id' => $workflowModel->id,
-                'initialStatusId' => $workflowModel->id.self::SEPARATOR_STATUS_NAME.$workflowModel->initial_status_id,
-                'source' => $this
-            ]);
+            $this->_w[$id] = $workflow;
         }
         return $this->_w[$id];
     }
 
     /**
-     * @param string $val canonical id (e.g. myWorkflow/myStatus)
-     * @return array
+     * Loads definition for the workflow whose id is passed as argument.
+     *
+     * The workflow Id passed as argument is used to create the class name of the object
+     * that holds the workflow definition.
+     *
+     * @param string $id
+     * @return mixed
+     * @throws WorkflowException the definition could not be loaded
      */
-    public function parseStatusId($val)
+    public function getWorkflowDefinition($id)
     {
-        // TODO : validate $val and once split in workflow_id and status_id - ensure they are both valid
+        if (!$this->isValidWorkflowId($id)) {
+            throw new WorkflowException('Invalid workflow Id : ' . VarDumper::dumpAsString($id));
+        }
+        if (!isset($this->_workflowDef[$id])) {
+            if ($this->getDefinitionCache() != null) {
+                $cache = $this->getDefinitionCache();
+                $key = $cache->buildKey('yii2-workflow-def-' . $id);
+                if ($cache->exists($key)) {
+                    $this->_workflowDef[$id] = $cache->get($key);
+                } else {
+                    $this->_workflowDef[$id] = $this->loadDefinition($id);
+                    $cache->set($key, $this->_workflowDef[$id]);
+                }
+            } else {
+                $this->_workflowDef[$id] = $this->loadDefinition($id);
+            }
+        }
+        return $this->_workflowDef[$id];
+    }
+
+    /**
+     * Loads the definition oa a workflow.
+     *
+     * @param string $id
+     * @return \cornernote\workflow\manager\models\Workflow
+     * @throws WorkflowException
+     * @internal param IWorkflowSource $source
+     */
+    public function loadDefinition($id)
+    {
+        $workflowModel = \cornernote\workflow\manager\models\Workflow::findOne(['id' => $id]);
+        if (!$workflowModel) {
+            throw new WorkflowException('No workflow found with id ' . $id);
+        }
+        return [
+            'class' => 'raoul2000\workflow\base\Workflow',
+            'id' => $workflowModel->id,
+            Workflow::PARAM_INITIAL_STATUS_ID => $workflowModel->id . self::SEPARATOR_STATUS_NAME . $workflowModel->initial_status_id,
+            'source' => $this
+        ];
+    }
+
+    /**
+     * Return the workflow definition cache component used by this workflow source or NULL if no cache is used.
+     * @return null|Cache
+     * @throws InvalidConfigException
+     */
+    public function getDefinitionCache()
+    {
+        if (!isset($this->definitionCache)) {
+            return null;
+        }
+        if (!isset($this->_dc)) {
+            if (is_string($this->definitionCache)) {
+                $this->_dc = Yii::$app->get($this->definitionCache);
+            } elseif (is_array($this->definitionCache)) {
+                $this->_dc = Yii::createObject($this->definitionCache);
+            } elseif (is_object($this->definitionCache)) {
+                $this->_dc = $this->definitionCache;
+            } else {
+                throw new InvalidConfigException('invalid "definitionCache" attribute : string or object expected');
+            }
+            if (!$this->_dc instanceof Cache) {
+                throw new InvalidConfigException('the workflow definition cache must implement the yii\caching\Cache interface');
+            }
+        }
+        return $this->_dc;
+    }
+
+    /**
+     * Returns the class map array for this Workflow source instance.
+     *
+     * @return string[]
+     */
+    public function getClassMap()
+    {
+        return $this->_classMap;
+    }
+
+    /**
+     * Returns the class name that implement the type passed as argument.
+     * There are 3 built-in types that must have a class name :
+     *
+     * - self::TYPE_WORKFLOW
+     * - self::TYPE_STATUS
+     * - self::TYPE_TRANSITION
+     *
+     * The constructor ensure that if a class map is provided, it include class names for these 3 types. Failure to do so
+     * will result in an exception being thrown by the constructor.
+     *
+     * @param string $type Type name
+     * @return string | null the class name or NULL if no class name is found forthis type.
+     */
+    public function getClassMapByType($type)
+    {
+        return array_key_exists($type, $this->_classMap) ? $this->_classMap[$type] : null;
+    }
+
+    /**
+     * @param string $val canonical id (e.g. myWorkflow/myStatus)
+     * @param BaseActiveRecord|SimpleWorkflowBehavior $helper
+     * @return array
+     * @throws WorkflowException
+     */
+    public function parseStatusId($val, $helper = null)
+    {
+        if (empty($val) || !is_string($val)) {
+            throw new WorkflowException('Not a valid status id : a non-empty string is expected  - status = ' . VarDumper::dumpAsString($val));
+        }
         $tokens = array_map('trim', explode(self::SEPARATOR_STATUS_NAME, $val));
+        $tokenCount = count($tokens);
+        if ($tokenCount == 1) {
+            $tokens[1] = $tokens[0];
+            $tokens[0] = null;
+            if (!empty($helper)) {
+                if (is_string($helper)) {
+                    $tokens[0] = $helper;
+                } elseif ($helper instanceof BaseActiveRecord) {
+                    $tokens[0] = $helper->hasWorkflowStatus()
+                        ? $helper->getWorkflowStatus()->getWorkflowId()
+                        : $helper->getDefaultWorkflowId();
+                }
+            }
+            if ($tokens[0] === null) {
+                throw new WorkflowException('Not a valid status id format: failed to get workflow id - status = ' . VarDumper::dumpAsString($val));
+            }
+        } elseif ($tokenCount != 2) {
+            throw new WorkflowException('Not a valid status id format: ' . VarDumper::dumpAsString($val));
+        }
+
+        if (!$this->isValidWorkflowId($tokens[0])) {
+            throw new WorkflowException('Not a valid status id : incorrect workflow id format in ' . VarDumper::dumpAsString($val));
+        } elseif (!$this->isValidStatusLocalId($tokens[1])) {
+            throw new WorkflowException('Not a valid status id : incorrect status local id format in ' . VarDumper::dumpAsString($val));
+        }
         return $tokens;
     }
+
+    /**
+     * Checks if the string passed as argument can be used as a workflow ID.
+     *
+     * A workflow ID is a string that matches self::PATTERN_ID.
+     *
+     * @param string $val
+     * @return boolean TRUE if the $val can be used as workflow id, FALSE otherwise
+     */
+    public function isValidWorkflowId($val)
+    {
+        return is_string($val) && preg_match(self::PATTERN_ID, $val) != 0;
+    }
+
+    /**
+     * Checks if the string passed as argument can be used as a status local ID.
+     *
+     * @param string $val
+     * @return boolean
+     */
+    public function isValidStatusLocalId($val)
+    {
+        return is_string($val) && preg_match(self::PATTERN_ID, $val) != 0;
+    }
+
 }
