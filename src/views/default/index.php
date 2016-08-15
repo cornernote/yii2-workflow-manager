@@ -20,15 +20,15 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php
     $items = [
         [
-            'label' => '<span class="glyphicon glyphicon-plus"></span> ' . Yii::t('workflow', 'New'),
+            'label' => '<span class="glyphicon glyphicon-plus"></span> ' . Yii::t('workflow', 'Create'),
             'url' => ['create'],
             'encode' => false,
         ],
     ];
-    foreach (Workflow::find()->orderBy(['name' => SORT_ASC])->all() as $workflow) {
+    foreach (Workflow::find()->orderBy(['id' => SORT_ASC])->all() as $workflow) {
         /** @var Workflow $workflow */
         $items[] = [
-            'label' => $workflow->name,
+            'label' => $workflow->id,
             'url' => ['view', 'id' => $workflow->id],
         ];
     }

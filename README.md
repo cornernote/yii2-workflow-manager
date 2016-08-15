@@ -31,6 +31,11 @@ or add
 
 to the `require` section of your `composer.json` file.
 
+## Migrations
+
+```
+$ php yii migrate --migrationPath=@cornernote/workflow/manager/migrations
+```
 
 ## Configuration
 

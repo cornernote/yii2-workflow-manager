@@ -2,6 +2,8 @@
 
 use cornernote\workflow\manager\models\Transition;
 use dmstr\helpers\Html;
+use raoul2000\workflow\view\WorkflowViewWidget;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\jui\Sortable;
 use yii\web\JsExpression;
@@ -11,7 +13,7 @@ use yii\widgets\DetailView;
  * @var yii\web\View $this
  * @var cornernote\workflow\manager\models\Workflow $model
  */
-$this->title = $model->name;
+$this->title = $model->id;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('workflow', 'Workflow'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -29,54 +31,50 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </h1>
 
-    <?php
-    $sortables = [];
-    foreach ($model->statuses as $status) {
-        $actions = [];
-        $actions[] = '<span class="glyphicon glyphicon-move sortable-handle" style="cursor: move"></span>';
-        if ($model->initial_status_id != $status->id) {
-            $actions[] = Html::a('<span class="glyphicon glyphicon-star"></span>', ['initial', 'id' => $model->id, 'status_id' => $status->id], ['title' => Yii::t('workflow', 'Set Initial')]);
-        }
-        $actions[] = Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['status/update', 'id' => $status->id], ['title' => Yii::t('workflow', 'Update')]);
-        $actions[] = Html::a('<span class="glyphicon glyphicon-trash"></span>', ['status/delete', 'id' => $status->id], [
-            'title' => Yii::t('workflow', 'Delete'),
-            'data-confirm' => '' . Yii::t('workflow', 'Are you sure?') . '',
-            'data-method' => 'post',
-        ]);
-
-        $transitions = [];
-        foreach ($status->startTransitions as $transition) {
-            $transitions[] = $transition->endStatus->name;
-        }
-        $transitions = !empty($transitions) ? '<br><small><span class="glyphicon glyphicon-chevron-right"></span> ' . implode(', ', $transitions) . '</small>' : '';
-
-        $sortables[] = [
-            'content' => '<div class="pull-right">' . implode(' ', $actions) . '</div>' . $status->name . $transitions,
-            'options' => [
-                'id' => 'Status_' . $status->id,
-                'class' => 'list-group-item',
-            ],
-        ];
-    }
-    echo DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'name',
-            [
-                'attribute' => 'initial_status_id',
-                'value' => $model->initialStatus ? $model->initialStatus->name : null,
-            ],
-            [
-                'label' => Yii::t('workflow', 'Status') . '<br>' . Html::a(Yii::t('workflow', 'Create Status'), ['status/create', 'workflow_id' => $model->id], ['class' => 'btn btn-success btn-xs']),
-                'value' => Sortable::widget([
-                    'items' => $sortables,
+    <div class="row">
+        <div class="col-md-6">
+            <?php
+            $sortables = [];
+            foreach ($model->statuses as $status) {
+                $actions = [];
+                $actions[] = '<span class="glyphicon glyphicon-move sortable-handle" style="cursor: move"></span>';
+                if ($model->initial_status_id != $status->id) {
+                    $actions[] = Html::a('<span class="glyphicon glyphicon-star"></span>', ['initial', 'id' => $model->id, 'status_id' => $status->id], ['title' => Yii::t('workflow', 'Set Initial')]);
+                }
+                $actions[] = Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['status/update', 'id' => $status->id], ['title' => Yii::t('workflow', 'Update')]);
+                $actions[] = Html::a('<span class="glyphicon glyphicon-trash"></span>', ['status/delete', 'id' => $status->id], [
+                    'title' => Yii::t('workflow', 'Delete'),
+                    'data-confirm' => '' . Yii::t('workflow', 'Are you sure?') . '',
+                    'data-method' => 'post',
+                ]);
+                $transitions = $status->startTransitions ? '<br><small><span class="glyphicon glyphicon-chevron-right"></span> ' . implode(', ', ArrayHelper::map($status->startTransitions, 'end_status_id', 'end_status_id')) . '</small>' : '';
+                $sortables[] = [
+                    'content' => '<div class="pull-right">' . implode(' ', $actions) . '</div>' . $status->id . $transitions,
                     'options' => [
-                        'class' => 'list-group',
-                        'style' => 'margin-bottom:0;',
+                        'id' => 'Status_' . $status->id,
+                        'class' => 'list-group-item',
                     ],
-                    'clientOptions' => [
-                        'axis' => 'y',
-                        'update' => new JsExpression("function(event, ui){
+                ];
+            }
+            echo DetailView::widget([
+                'model' => $model,
+                'attributes' => [
+                    'id',
+                    [
+                        'attribute' => 'initial_status_id',
+                        'value' => $model->initial_status_id,
+                    ],
+                    [
+                        'label' => Yii::t('workflow', 'Status') . '<br>' . Html::a(Yii::t('workflow', 'Create Status'), ['status/create', 'workflow_id' => $model->id], ['class' => 'btn btn-success btn-xs']),
+                        'value' => Sortable::widget([
+                            'items' => $sortables,
+                            'options' => [
+                                'class' => 'list-group',
+                                'style' => 'margin-bottom:0;',
+                            ],
+                            'clientOptions' => [
+                                'axis' => 'y',
+                                'update' => new JsExpression("function(event, ui){
                                     $.ajax({
                                         type: 'POST',
                                         url: '" . Url::to(['status/sort']) . "',
@@ -86,13 +84,22 @@ $this->params['breadcrumbs'][] = $this->title;
                                         }
                                     });
                                 }"),
+                            ],
+                        ]),
+                        'format' => 'raw',
                     ],
-                ]),
-                'format' => 'raw',
-            ],
-        ],
-    ]);
-    ?>
+                ],
+            ]);
+            ?>
+        </div>
+        <div class="col-md-6">
+            <?= WorkflowViewWidget::widget([
+                'workflow' => Yii::$app->workflowSource->getWorkflow($model->id),
+                'containerId' => 'workflowView'
+            ]) ?>
+            <div id="workflowView"></div>
+        </div>
+    </div>
 
     <?php if ($model->statuses) { ?>
         <?= Html::beginForm(); ?>
@@ -105,7 +112,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <tr>
                 <?php foreach ($model->statuses as $endStatus) { ?>
                     <th class="text-center">
-                        <?= $endStatus->name ?>
+                        <?= $endStatus->id ?>
                     </th>
                 <?php } ?>
             </tr>
@@ -114,7 +121,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?php if (!$k) { ?>
                         <th class="text-center" rowspan="<?= count($model->statuses) ?>"><?= Yii::t('workflow', 'Start Status') ?></th>
                     <?php } ?>
-                    <th class="text-right"><?= $startStatus->name ?></th>
+                    <th class="text-right"><?= $startStatus->id ?></th>
                     <?php foreach ($model->statuses as $endStatus) { ?>
                         <td class="text-center">
                             <?php
@@ -123,7 +130,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 unset($options['uncheck']);
                                 $options['disabled'] = true;
                             }
-                            $transition = Transition::findOne(['start_status_id' => $startStatus->id, 'end_status_id' => $endStatus->id]);
+                            $transition = Transition::findOne(['workflow_id' => $model->id, 'start_status_id' => $startStatus->id, 'end_status_id' => $endStatus->id]);
                             echo Html::checkbox('Status[' . $startStatus->id . '][' . $endStatus->id . ']', $transition ? true : false, $options);
                             ?>
                         </td>

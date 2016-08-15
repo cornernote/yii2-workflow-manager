@@ -8,6 +8,7 @@ use yii\db\ActiveRecord;
 /**
  * This is the model class for table "sw_transition".
  *
+ * @property integer $workflow_id
  * @property integer $start_status_id
  * @property integer $end_status_id
  *
@@ -30,10 +31,10 @@ class Transition extends ActiveRecord
     public function rules()
     {
         return [
-            [['start_status_id', 'end_status_id'], 'required'],
-            [['start_status_id', 'end_status_id'], 'integer'],
-            [['end_status_id'], 'exist', 'skipOnError' => true, 'targetClass' => Status::className(), 'targetAttribute' => ['end_status_id' => 'id']],
-            [['start_status_id'], 'exist', 'skipOnError' => true, 'targetClass' => Status::className(), 'targetAttribute' => ['start_status_id' => 'id']]
+            [['workflow_id', 'start_status_id', 'end_status_id'], 'required'],
+            [['workflow_id', 'start_status_id', 'end_status_id'], 'string', 'max' => 32],
+            [['start_status_id'], 'exist', 'skipOnError' => true, 'targetClass' => Status::className(), 'targetAttribute' => ['start_status_id' => 'id']],
+            [['end_status_id'], 'exist', 'skipOnError' => true, 'targetClass' => Status::className(), 'targetAttribute' => ['end_status_id' => 'id']]
         ];
     }
 
@@ -43,8 +44,8 @@ class Transition extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'start_status_id' => Yii::t('app', 'Start Status ID'),
-            'end_status_id' => Yii::t('app', 'End Status ID'),
+            'start_status_id' => Yii::t('app', 'Start Status'),
+            'end_status_id' => Yii::t('app', 'End Status'),
         ];
     }
 
@@ -53,7 +54,7 @@ class Transition extends ActiveRecord
      */
     public function getEndStatus()
     {
-        return $this->hasOne(Status::className(), ['id' => 'end_status_id']);
+        return $this->hasOne(Status::className(), ['id' => 'end_status_id'])->andWhere(['workflow_id' => $this->workflow_id]);
     }
 
     /**
@@ -61,6 +62,6 @@ class Transition extends ActiveRecord
      */
     public function getStartStatus()
     {
-        return $this->hasOne(Status::className(), ['id' => 'start_status_id']);
+        return $this->hasOne(Status::className(), ['id' => 'start_status_id'])->andWhere(['workflow_id' => $this->workflow_id]);
     }
 }

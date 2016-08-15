@@ -7,7 +7,7 @@ use yii\helpers\Html;
  * @var cornernote\workflow\manager\models\Workflow $model
  */
 
-$this->title = Yii::t('workflow', 'Create Workflow');
+$this->title = Yii::t('workflow', 'Create');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('workflow', 'Workflow'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

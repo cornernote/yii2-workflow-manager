@@ -37,10 +37,11 @@ class DefaultController extends Controller
         if (isset($_POST['Status'])) {
             foreach ($_POST['Status'] as $start_status_id => $statuses) {
                 foreach ($statuses as $end_status_id => $checked) {
-                    $transition = Transition::findOne(['start_status_id' => $start_status_id, 'end_status_id' => $end_status_id]);
+                    $transition = Transition::findOne(['workflow_id' => $model->id, 'start_status_id' => $start_status_id, 'end_status_id' => $end_status_id]);
                     if ($checked) {
                         if (!$transition) {
                             $transition = new Transition();
+                            $transition->workflow_id = $model->id;
                             $transition->start_status_id = $start_status_id;
                             $transition->end_status_id = $end_status_id;
                             $transition->save();

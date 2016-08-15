@@ -9,7 +9,6 @@ use yii\db\ActiveRecord;
  * This is the model class for table "sw_workflow".
  *
  * @property integer $id
- * @property string $name
  * @property integer $initial_status_id
  *
  * @property Status[] $statuses
@@ -31,9 +30,8 @@ class Workflow extends ActiveRecord
     public function rules()
     {
         return [
-            [['name'], 'required'],
-            [['initial_status_id'], 'integer'],
-            [['name'], 'string', 'max' => 255],
+            [['id'], 'required'],
+            [['id', 'initial_status_id'], 'string', 'max' => 32],
             [['initial_status_id'], 'exist', 'skipOnError' => true, 'targetClass' => Status::className(), 'targetAttribute' => ['initial_status_id' => 'id']]
         ];
     }

@@ -9,7 +9,7 @@ use yii\helpers\Html;
 
 $this->title = Yii::t('workflow', 'Create Status');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('workflow', 'Workflow'), 'url' => ['default/index']];
-$this->params['breadcrumbs'][] = ['label' => $model->workflow->name, 'url' => ['default/view', 'id' => $model->workflow->id]];
+$this->params['breadcrumbs'][] = ['label' => $model->workflow->id, 'url' => ['default/view', 'id' => $model->workflow->id]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="workflow-status-create">

@@ -10,7 +10,6 @@ use yii\db\ActiveRecord;
  *
  * @property integer $id
  * @property integer $workflow_id
- * @property string $name
  * @property string $label
  * @property integer $sort_order
  *
@@ -34,9 +33,10 @@ class Status extends ActiveRecord
     public function rules()
     {
         return [
-            [['workflow_id', 'name'], 'required'],
-            [['workflow_id', 'sort_order'], 'integer'],
-            [['name', 'label'], 'string', 'max' => 255],
+            [['id', 'workflow_id'], 'required'],
+            [['sort_order'], 'integer'],
+            [['id', 'workflow_id'], 'string', 'max' => 32],
+            [['label'], 'string', 'max' => 64],
             [['workflow_id'], 'exist', 'skipOnError' => true, 'targetClass' => Workflow::className(), 'targetAttribute' => ['workflow_id' => 'id']]
         ];
     }
@@ -49,7 +49,6 @@ class Status extends ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'workflow_id' => Yii::t('app', 'Workflow'),
-            'name' => Yii::t('app', 'Name'),
             'label' => Yii::t('app', 'Label'),
         ];
     }
@@ -67,7 +66,7 @@ class Status extends ActiveRecord
      */
     public function getStartTransitions()
     {
-        return $this->hasMany(Transition::className(), ['start_status_id' => 'id']);
+        return $this->hasMany(Transition::className(), ['start_status_id' => 'id'])->andWhere(['workflow_id' => $this->workflow_id]);
     }
 
     /**
@@ -75,7 +74,7 @@ class Status extends ActiveRecord
      */
     public function getEndTransitions()
     {
-        return $this->hasMany(Transition::className(), ['end_status_id' => 'id']);
+        return $this->hasMany(Transition::className(), ['end_status_id' => 'id'])->andWhere(['workflow_id' => $this->workflow_id]);
     }
 
     /**
