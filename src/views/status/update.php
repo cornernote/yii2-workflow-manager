@@ -9,9 +9,8 @@ use yii\helpers\Html;
 
 $this->title = $model->id;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('workflow', 'Workflow'), 'url' => ['default/index']];
-$this->params['breadcrumbs'][] = ['label' => $model->workflow->id, 'url' => ['workflow/view', 'id' => $model->workflow->id]];
-$this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = Yii::t('workflow', 'Update');
+$this->params['breadcrumbs'][] = ['label' => $model->workflow->id, 'url' => ['default/view', 'id' => $model->workflow->id]];
+$this->params['breadcrumbs'][] = $model->id;
 ?>
 <div class="workflow-status-update">
 
