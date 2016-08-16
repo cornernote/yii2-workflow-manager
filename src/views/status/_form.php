@@ -54,7 +54,7 @@ use yii\bootstrap\ActiveForm;
         foreach ($model->metadatas as $key => $_metadata) {
             echo '<tr>';
             echo $this->render('_form-metadata', [
-                'key' => $_metadata->isNewRecord ? (strpos($key, 'new') !== false ? $key : 'new' . $key) : $_metadata->status_id,
+                'key' => $_metadata->isNewRecord ? (strpos($key, 'new') !== false ? $key : 'new' . $key) : $_metadata->key,
                 'form' => $form,
                 'metadata' => $_metadata,
             ]);

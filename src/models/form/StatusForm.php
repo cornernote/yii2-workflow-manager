@@ -134,7 +134,7 @@ class StatusForm extends Model
      */
     private function getMetadata($key)
     {
-        $metadata = $key && strpos($key, 'new') === false ? Metadata::findOne(['status_id' => $key, 'workflow_id' => $this->status->workflow_id]) : false;
+        $metadata = $key && strpos($key, 'new') === false ? Metadata::findOne(['key' => $key, 'status_id' => $this->status->id, 'workflow_id' => $this->status->workflow_id]) : false;
         if (!$metadata) {
             $metadata = new Metadata();
             $metadata->loadDefaultValues();
