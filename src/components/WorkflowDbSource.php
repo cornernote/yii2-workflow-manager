@@ -227,10 +227,16 @@ class WorkflowDbSource extends Object implements IWorkflowSource
         }
         if (!array_key_exists($statusId, $this->_t[$wId])) {
             $transitions = [];
-            $transitionModels = \cornernote\workflow\manager\models\Transition::findAll([
-                'workflow_id' => $wId,
-                'start_status_id' => $stId,
-            ]);
+            $transitionModels = \cornernote\workflow\manager\models\Transition::find()
+                ->andWhere([
+                    'sw_transition.workflow_id' => $wId,
+                    'sw_transition.start_status_id' => $stId,
+                ])
+                ->leftJoin('sw_status', 'sw_status.id = sw_transition.end_status_id AND sw_status.workflow_id = :workflow_id', [
+                    ':workflow_id' => $wId,
+                ])
+                ->orderBy(['sw_status.sort_order' => SORT_ASC])
+                ->all();
             foreach ($transitionModels as $transition) {
                 $endId = $wId . self::SEPARATOR_STATUS_NAME . $transition->end_status_id;
                 $transitions[] = Yii::createObject([
