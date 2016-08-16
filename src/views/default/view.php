@@ -8,8 +8,8 @@ use cornernote\workflow\manager\models\Transition;
 use dmstr\helpers\Html;
 use raoul2000\workflow\view\WorkflowViewWidget;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Json;
 use yii\helpers\Url;
-use yii\helpers\VarDumper;
 use yii\jui\Sortable;
 use yii\web\JsExpression;
 use yii\widgets\DetailView;
@@ -49,7 +49,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'data-method' => 'post',
                 ]);
                 $transitions = $status->startTransitions ? '<br><small><span class="glyphicon glyphicon-chevron-right"></span>&nbsp; &nbsp;' . implode(', ', ArrayHelper::map($status->startTransitions, 'end_status_id', 'end_status_id')) . '</small>' : '';
-                $metadatas = $status->metadatas ? '<br><small><span class="glyphicon glyphicon-tags"></span>&nbsp; &nbsp;' . VarDumper::dumpAsString(ArrayHelper::map($status->metadatas, 'key', 'value')) . '</small>' : '';
+                $metadatas = $status->metadatas ? '<br><small><span class="glyphicon glyphicon-tags"></span>&nbsp; &nbsp;' . Json::encode(ArrayHelper::map($status->metadatas, 'key', 'value')) . '</small>' : '';
                 $sortables[] = [
                     'content' => '<div class="pull-right">' . implode(' ', $actions) . '</div>' . $status->id . $transitions . $metadatas,
                     'options' => [
