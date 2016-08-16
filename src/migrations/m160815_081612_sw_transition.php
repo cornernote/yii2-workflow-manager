@@ -13,16 +13,14 @@ class m160815_081612_sw_transition extends Migration
             'end_status_id' => $this->string(32)->notNull(),
             'PRIMARY KEY (workflow_id, start_status_id, end_status_id)',
         ], 'ENGINE=InnoDB');
-        $this->createIndex('workflow_id', '{{%sw_transition}}', 'workflow_id');
-        $this->createIndex('start_status_id', '{{%sw_transition}}', 'start_status_id');
-        $this->createIndex('end_status_id', '{{%sw_transition}}', 'end_status_id');
+        $this->createIndex('workflow_start_status_id', '{{%sw_transition}}', ['workflow_id', 'start_status_id'], true);
+        $this->createIndex('workflow_end_status_id', '{{%sw_transition}}', ['workflow_id', 'end_status_id'], true);
     }
 
     public function safeDown()
     {
-        $this->dropIndex('workflow_id', '{{%sw_transition}}');
-        $this->dropIndex('start_status_id', '{{%sw_transition}}');
-        $this->dropIndex('end_status_id', '{{%sw_transition}}');
+        $this->dropIndex('workflow_start_status_id', '{{%sw_transition}}');
+        $this->dropIndex('workflow_end_status_id', '{{%sw_transition}}');
         $this->dropTable('{{%sw_transition}}');
     }
     

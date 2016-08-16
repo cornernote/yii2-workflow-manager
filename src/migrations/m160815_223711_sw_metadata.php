@@ -14,13 +14,13 @@ class m160815_223711_sw_metadata extends Migration
             'key' => $this->string(64)->notNull(),
             'value' => $this->string(255)->null()->defaultValue(null),
         ], 'ENGINE=InnoDB');
-        $this->createIndex('status_id', '{{%sw_metadata}}', 'status_id', true);
+        $this->createIndex('workflow_status_id', '{{%sw_metadata}}', ['workflow_id', 'status_id'], true);
     }
 
     public function safeDown()
     {
-        $this->dropIndex('status_id', '{{%sw_metadata}}');
+        $this->dropIndex('workflow_status_id', '{{%sw_metadata}}');
         $this->dropTable('{{%sw_metadata}}');
     }
-    
+
 }

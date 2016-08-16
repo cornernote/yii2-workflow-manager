@@ -117,6 +117,9 @@ class Status extends ActiveRecord
      */
     public function beforeDelete()
     {
+        foreach ($this->metadatas as $metadata) {
+            $metadata->delete();
+        }
         foreach ($this->startTransitions as $startTransition) {
             $startTransition->delete();
         }
