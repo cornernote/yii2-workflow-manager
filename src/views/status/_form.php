@@ -85,11 +85,6 @@ use yii\bootstrap\ActiveForm;
             $(document).on('click', '.status-remove-metadata-button', function () {
                 $(this).closest('tbody tr').remove();
             });
-            <?php
-            // click add when the form first loads
-            if (!Yii::$app->request->isPost && $model->status->isNewRecord)
-                echo "$('#status-new-metadata-button').click();";
-            ?>
         </script>
         <?php $this->registerJs(str_replace(['<script>', '</script>'], '', ob_get_clean())); ?>
 

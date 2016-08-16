@@ -95,11 +95,15 @@ $this->params['breadcrumbs'][] = $this->title;
             ?>
         </div>
         <div class="col-md-6">
-            <?= WorkflowViewWidget::widget([
-                'workflow' => Yii::$app->workflowSource->getWorkflow($model->id),
-                'containerId' => 'workflowView'
-            ]) ?>
-            <div id="workflowView" style="height: 400px;"></div>
+            <?php
+            if ($model->statuses) {
+                echo WorkflowViewWidget::widget([
+                    'workflow' => Yii::$app->workflowSource->getWorkflow($model->id),
+                    'containerId' => 'workflowView'
+                ]);
+                echo '<div id="workflowView" style="height: 400px;"></div>';
+            }
+            ?>
         </div>
     </div>
 
