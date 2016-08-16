@@ -90,12 +90,12 @@ class WorkflowDbSource extends Object implements IWorkflowSource
     private $_w = [];
 
     /**
-     * @var Status[] list status instances indexed by their id
+     * @var Status[][] list status instances for each workflow indexed by their workflow_id and id
      */
     private $_s = [];
 
     /**
-     * @var Transition[] list of out-going Transition instances indexed by the start status id
+     * @var Transition[][] list of out-going Transition instances indexed by the start status id
      */
     private $_t = [];
 
@@ -118,9 +118,9 @@ class WorkflowDbSource extends Object implements IWorkflowSource
     ];
 
     /**
-     * @var bool
+     * @var bool[]
      */
-    private $_allStatusLoaded = false;
+    private $_allStatusLoaded = [];
 
     /**
      * Constructor method.
@@ -159,7 +159,10 @@ class WorkflowDbSource extends Object implements IWorkflowSource
     {
         list($wId, $stId) = $this->parseStatusId($id);
         $canonicalStId = $wId . self::SEPARATOR_STATUS_NAME . $stId;
-        if (!array_key_exists($canonicalStId, $this->_s)) {
+        if (!isset($this->_s[$wId])) {
+            $this->_s[$wId] = [];
+        }
+        if (!array_key_exists($canonicalStId, $this->_s[$wId])) {
             $statusModel = \cornernote\workflow\manager\models\Status::findOne([
                 'workflow_id' => $wId,
                 'id' => $stId
@@ -167,7 +170,7 @@ class WorkflowDbSource extends Object implements IWorkflowSource
             if ($statusModel == null) {
                 throw new WorkflowException('No status found with id ' . $id);
             }
-            $this->_s[$canonicalStId] = Yii::createObject([
+            $this->_s[$wId][$canonicalStId] = Yii::createObject([
                 'class' => $this->getClassMapByType(self::TYPE_STATUS),
                 'id' => $canonicalStId,
                 'workflowId' => $statusModel->workflow_id,
@@ -176,7 +179,7 @@ class WorkflowDbSource extends Object implements IWorkflowSource
                 'metadata' => ArrayHelper::map($statusModel->metadatas, 'key', 'value'),
             ]);
         }
-        return $this->_s[$canonicalStId];
+        return $this->_s[$wId][$canonicalStId];
     }
 
     /**
@@ -185,16 +188,17 @@ class WorkflowDbSource extends Object implements IWorkflowSource
      */
     public function getAllStatuses($workflowId)
     {
-        if (!$this->_allStatusLoaded) {
-            $loadedStatusIds = array_keys($this->_s);
+        if (empty($this->_allStatusLoaded[$workflowId])) {
+            $this->_s[$workflowId] = [];
             /** @var \cornernote\workflow\manager\models\Status[] $statusModels */
             $statusModels = \cornernote\workflow\manager\models\Status::find()
                 ->where(['workflow_id' => $workflowId])
-                ->andWhere(['NOT IN', 'id', $loadedStatusIds])
+                //->andWhere(['NOT IN', 'id', array_keys($this->_s[$workflowId])]) // removed to fix sort order
+                ->orderBy(['sort_order' => SORT_ASC])
                 ->all();
             foreach ($statusModels as $statusModel) {
                 $canonicalStId = $workflowId . self::SEPARATOR_STATUS_NAME . $statusModel->id;
-                $this->_s[$canonicalStId] = Yii::createObject([
+                $this->_s[$workflowId][$canonicalStId] = Yii::createObject([
                     'class' => $this->getClassMapByType(self::TYPE_STATUS),
                     'id' => $canonicalStId,
                     'workflowId' => $workflowId,
@@ -203,9 +207,9 @@ class WorkflowDbSource extends Object implements IWorkflowSource
                     'metadata' => ArrayHelper::map($statusModel->metadatas, 'key', 'value'),
                 ]);
             }
-            $this->_allStatusLoaded = true;
+            $this->_allStatusLoaded[$workflowId] = true;
         }
-        return $this->_s;
+        return $this->_s[$workflowId];
     }
 
     /**
@@ -218,7 +222,10 @@ class WorkflowDbSource extends Object implements IWorkflowSource
     {
         list($wId, $stId) = $this->parseStatusId($statusId, $model);
         $statusId = $wId . self::SEPARATOR_STATUS_NAME . $stId;
-        if (!array_key_exists($statusId, $this->_t)) {
+        if (!isset($this->_t[$wId])) {
+            $this->_t[$wId] = [];
+        }
+        if (!array_key_exists($statusId, $this->_t[$wId])) {
             $transitions = [];
             $transitionModels = \cornernote\workflow\manager\models\Transition::findAll([
                 'workflow_id' => $wId,
@@ -233,9 +240,9 @@ class WorkflowDbSource extends Object implements IWorkflowSource
                     'source' => $this
                 ]);
             }
-            $this->_t[$statusId] = $transitions;
+            $this->_t[$wId][$statusId] = $transitions;
         }
-        return $this->_t[$statusId];
+        return $this->_t[$wId][$statusId];
     }
 
     /**
