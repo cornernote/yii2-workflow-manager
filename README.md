@@ -7,10 +7,16 @@
 [![Quality Score](https://img.shields.io/scrutinizer/g/cornernote/yii2-workflow-manager.svg?style=flat-square)](https://scrutinizer-ci.com/g/cornernote/yii2-workflow-manager)
 [![Total Downloads](https://img.shields.io/packagist/dt/cornernote/yii2-workflow-manager.svg?style=flat-square)](https://packagist.org/packages/cornernote/yii2-workflow-manager)
 
-Workflow Manager for Yii2.
+Workflow Manager for Yii2. Extends [Yii2-Workflow](https://github.com/raoul2000/yii2-workflow/) to provide an interface to manage workflows.
+
+![screenshot](https://cloud.githubusercontent.com/assets/51875/17660161/a351c124-6316-11e6-8e2b-28340fe6dc8d.png)
 
 
 ## Features
+
+* Create and manage workflows, statuses and transitions using a simple interface.
+* Manage metadata for each status to allow additional data such as colors and icons.
+* Displays the workflow transitions using [Yii2 Workflow View](https://github.com/raoul2000/yii2-workflow-view)
 
 
 ## Installation
@@ -48,6 +54,7 @@ $config = [
     ],
 ];
 ```
+
 
 ## License
 
