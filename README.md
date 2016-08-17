@@ -37,11 +37,13 @@ or add
 
 to the `require` section of your `composer.json` file.
 
+
 ## Migrations
 
 ```
 $ php yii migrate --migrationPath=@cornernote/workflow/manager/migrations
 ```
+
 
 ## Configuration
 
@@ -54,6 +56,10 @@ $config = [
     ],
 ];
 ```
+
+## Usage
+
+Simply visit `?r=workflow` within your application to start managing workflows.
 
 
 ## License
