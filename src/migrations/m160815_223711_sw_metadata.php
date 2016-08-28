@@ -14,7 +14,7 @@ class m160815_223711_sw_metadata extends Migration
             'key' => $this->string(64)->notNull(),
             'value' => $this->string(255)->null()->defaultValue(null),
         ], 'ENGINE=InnoDB');
-        $this->createIndex('workflow_status_id', '{{%sw_metadata}}', ['workflow_id', 'status_id'], true);
+        $this->createIndex('workflow_status_id', '{{%sw_metadata}}', ['workflow_id', 'status_id', 'key'], true);
     }
 
     public function safeDown()
