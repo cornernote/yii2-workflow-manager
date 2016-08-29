@@ -49,6 +49,11 @@ $ php yii migrate --migrationPath=@cornernote/workflow/manager/migrations
 
 ```php
 $config = [
+    'components' => [
+        'workflowSource' => [
+            'class' => 'cornernote\workflow\manager\components\WorkflowDbSource',
+        ],
+    ],
     'modules' => [
         'workflow' => [
             'class' => 'cornernote\workflow\manager\Module',
@@ -61,6 +66,23 @@ $config = [
 
 Simply visit `?r=workflow` within your application to start managing workflows.
 
+Once you have defined a workflow, you can attach it to a model as follows:
+
+```
+class Post extends \yii\db\ActiveRecord
+{
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => \raoul2000\workflow\base\SimpleWorkflowBehavior::className(),
+                'defaultWorkflowId' => 'post',
+                'propagateErrorsToModel' => true,
+            ],
+        ];
+    }
+}
+```
 
 ## License
 
