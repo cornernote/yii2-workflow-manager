@@ -62,13 +62,14 @@ $config = [
 ];
 ```
 
+
 ## Usage
 
 Simply visit `?r=workflow` within your application to start managing workflows.
 
 Once you have defined a workflow, you can attach it to a model as follows:
 
-```
+```php
 class Post extends \yii\db\ActiveRecord
 {
     public function behaviors()
@@ -83,6 +84,7 @@ class Post extends \yii\db\ActiveRecord
     }
 }
 ```
+
 
 ## License
 
