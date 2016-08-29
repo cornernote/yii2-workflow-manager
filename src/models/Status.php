@@ -69,10 +69,10 @@ class Status extends ActiveRecord
     {
         return $this->hasMany(Transition::className(), ['start_status_id' => 'id'])
             ->andWhere(['sw_transition.workflow_id' => $this->workflow_id])
-            ->leftJoin('sw_status', 'sw_status.id = sw_transition.end_status_id AND sw_status.workflow_id = :workflow_id', [
+            ->leftJoin('{{%sw_status}}', '{{%sw_status}}.id = {{%sw_transition}}.end_status_id AND {{%sw_status}}.workflow_id = :workflow_id', [
                 ':workflow_id' => $this->workflow_id,
             ])
-            ->orderBy(['sw_status.sort_order' => SORT_ASC]);
+            ->orderBy(['{{%sw_status}}.sort_order' => SORT_ASC]);
     }
 
     /**
@@ -82,10 +82,10 @@ class Status extends ActiveRecord
     {
         return $this->hasMany(Transition::className(), ['end_status_id' => 'id'])
             ->andWhere(['workflow_id' => $this->workflow_id])
-            ->leftJoin('sw_status', 'sw_status.id = sw_transition.start_status_id AND sw_status.workflow_id = :workflow_id', [
+            ->leftJoin('{{%sw_status}}', '{{%sw_status}}.id = {{%sw_transition}}.start_status_id AND {{%sw_status}}.workflow_id = :workflow_id', [
                 ':workflow_id' => $this->workflow_id,
             ])
-            ->orderBy(['sw_status.sort_order' => SORT_ASC]);
+            ->orderBy(['{{%sw_status}}.sort_order' => SORT_ASC]);
     }
 
     /**
