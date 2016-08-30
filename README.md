@@ -90,7 +90,7 @@ class Post extends \yii\db\ActiveRecord
 
 - Author: Brett O'Donnell <cornernote@gmail.com>
 - Source Code: https://github.com/cornernote/yii2-workflow-manager
-- Copyright © 2015 Mr PHP <info@mrphp.com.au>
+- Copyright © 2016 Mr PHP <info@mrphp.com.au>
 - License: BSD-3-Clause https://raw.github.com/cornernote/yii2-workflow-manager/master/LICENSE
 
 
