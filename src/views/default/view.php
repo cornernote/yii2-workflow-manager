@@ -48,10 +48,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     'data-confirm' => Yii::t('workflow', 'Are you sure?'),
                     'data-method' => 'post',
                 ]);
-                $transitions = $status->startTransitions ? '<br><small><span class="glyphicon glyphicon-chevron-right"></span>&nbsp; &nbsp;' . implode(', ', ArrayHelper::map($status->startTransitions, 'end_status_id', 'end_status_id')) . '</small>' : '';
+                $transitions = $status->startTransitions ? '<br><small><span class="glyphicon glyphicon-chevron-right"></span>&nbsp; &nbsp;' . implode(', ', ArrayHelper::map($status->startTransitions, 'end_status_id', 'endName')) . '</small>' : '';
                 $metadatas = $status->metadatas ? '<br><small><span class="glyphicon glyphicon-tags"></span>&nbsp; &nbsp;' . Json::encode(ArrayHelper::map($status->metadatas, 'key', 'value')) . '</small>' : '';
                 $sortables[] = [
-                    'content' => '<div class="pull-right">' . implode(' ', $actions) . '</div>' . $status->id . $transitions . $metadatas,
+                    'content' => '<div class="pull-right">' . implode(' ', $actions) . '</div>' . $status->name . $transitions . $metadatas,
                     'options' => [
                         'id' => 'Status_' . $status->id,
                         'class' => 'list-group-item',
@@ -118,7 +118,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <tr>
                 <?php foreach ($model->statuses as $endStatus) { ?>
                     <th class="text-center">
-                        <?= $endStatus->id ?>
+                        <?= $endStatus->name ?>
                     </th>
                 <?php } ?>
             </tr>
@@ -127,7 +127,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?php if (!$k) { ?>
                         <th class="text-center" rowspan="<?= count($model->statuses) ?>"><?= Yii::t('workflow', 'Start Status') ?></th>
                     <?php } ?>
-                    <th class="text-right"><?= $startStatus->id ?></th>
+                    <th class="text-right"><?= $startStatus->name ?></th>
                     <?php foreach ($model->statuses as $endStatus) { ?>
                         <td class="text-center">
                             <?php

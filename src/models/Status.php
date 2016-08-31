@@ -4,6 +4,7 @@ namespace cornernote\workflow\manager\models;
 
 use Yii;
 use yii\db\ActiveRecord;
+use yii\helpers\Inflector;
 
 /**
  * This is the model class for table "sw_status".
@@ -12,6 +13,8 @@ use yii\db\ActiveRecord;
  * @property string $workflow_id
  * @property string $label
  * @property integer $sort_order
+ * 
+ * @property string $name
  *
  * @property Workflow $workflow
  * @property Transition[] $startTransitions
@@ -52,6 +55,14 @@ class Status extends ActiveRecord
             'workflow_id' => Yii::t('app', 'Workflow'),
             'label' => Yii::t('app', 'Label'),
         ];
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->label ? $this->label : Inflector::camel2words($this->id);
     }
 
     /**

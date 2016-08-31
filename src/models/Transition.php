@@ -12,6 +12,9 @@ use yii\db\ActiveRecord;
  * @property string $start_status_id
  * @property string $end_status_id
  *
+ * @property string $startName
+ * @property string $endName
+ *
  * @property Status $endStatus
  * @property Status $startStatus
  */
@@ -47,6 +50,22 @@ class Transition extends ActiveRecord
             'start_status_id' => Yii::t('app', 'Start Status'),
             'end_status_id' => Yii::t('app', 'End Status'),
         ];
+    }
+
+    /**
+     * @return string
+     */
+    public function getStartName()
+    {
+        return $this->startStatus->getName();
+    }
+
+    /**
+     * @return string
+     */
+    public function getEndName()
+    {
+        return $this->endStatus->getName();
     }
 
     /**
