@@ -87,7 +87,7 @@ class StatusForm extends Model
             }
             $keep[] = $metadata->key;
         }
-        $query = Metadata::find()->andWhere(['workflow_id' => $this->status->workflow_id]);
+        $query = Metadata::find()->andWhere(['status_id' => $this->status->id, 'workflow_id' => $this->status->workflow_id]);
         if ($keep) {
             $query->andWhere(['not in', 'key', $keep]);
         }
