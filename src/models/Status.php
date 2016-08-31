@@ -107,6 +107,26 @@ class Status extends ActiveRecord
                 $this->sort_order = $lowest ? $lowest->sort_order + 1 : 1;
             }
         }
+        if (!$insert) {
+            $id = $this->id;
+            $this->id = $this->oldAttributes['id'];
+            if ($this->workflow->initial_status_id == $this->id) {
+                $this->workflow->initial_status_id = $id;
+                $this->workflow->save(false, ['initial_status_id']);
+            }
+            foreach ($this->startTransitions as $startTransition) {
+                $startTransition->start_status_id = $id;
+                $startTransition->save(false, ['start_status_id']);
+            }
+            foreach ($this->endTransitions as $endTransition) {
+                $endTransition->end_status_id = $id;
+                $endTransition->save(false, ['end_status_id']);
+            }
+            foreach ($this->metadatas as $metadata) {
+                $metadata->delete();
+            }
+            $this->id = $id;
+        }
         return parent::beforeSave($insert);
     }
 
