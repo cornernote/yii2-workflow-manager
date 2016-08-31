@@ -342,7 +342,8 @@ class WorkflowDbSource extends Object implements IWorkflowSource
     {
         $workflowModel = \cornernote\workflow\manager\models\Workflow::findOne(['id' => $id]);
         if (!$workflowModel) {
-            throw new WorkflowException('No workflow found with id ' . $id);
+            return null;
+            //throw new WorkflowException('No workflow found with id ' . $id);
         }
         return [
             'class' => 'raoul2000\workflow\base\Workflow',
