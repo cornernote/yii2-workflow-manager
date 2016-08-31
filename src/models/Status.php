@@ -107,7 +107,7 @@ class Status extends ActiveRecord
                 $this->sort_order = $lowest ? $lowest->sort_order + 1 : 1;
             }
         }
-        if (!$insert) {
+        if (!$insert && $this->id != $this->oldAttributes['id']) {
             $id = $this->id;
             $this->id = $this->oldAttributes['id'];
             if ($this->workflow->initial_status_id == $this->id) {
