@@ -13,6 +13,8 @@ use yii\db\ActiveRecord;
  *
  * @property Status[] $statuses
  * @property Status $initialStatus
+ * @property Transition[] $transitions
+ * @property Metadata[] $metadatas
  */
 class Workflow extends ActiveRecord
 {
@@ -64,12 +66,53 @@ class Workflow extends ActiveRecord
     }
 
     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTransitions()
+    {
+        return $this->hasMany(Transition::className(), ['workflow_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMetadatas()
+    {
+        return $this->hasMany(Metadata::className(), ['workflow_id' => 'id']);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function beforeSave($insert)
+    {
+        if (!$insert && $this->id != $this->oldAttributes['id']) {
+            $id = $this->id;
+            $this->id = $this->oldAttributes['id'];
+            foreach ($this->statuses as $status) {
+                $status->workflow_id = $id;
+                $status->save(false, ['workflow_id']);
+            }
+            foreach ($this->transitions as $transition) {
+                $transition->workflow_id = $id;
+                $transition->save(false, ['workflow_id']);
+            }
+            foreach ($this->metadatas as $metadata) {
+                $metadata->workflow_id = $id;
+                $metadata->save(false, ['workflow_id']);
+            }
+            $this->id = $id;
+        }
+        return parent::beforeSave($insert);
+    }
+
+    /**
      * @inheritdoc
      */
     public function beforeDelete()
     {
         $this->initial_status_id = null;
-        $this->save(false,['initial_status_id']);
+        $this->save(false, ['initial_status_id']);
         foreach ($this->statuses as $status) {
             $status->delete();
         }

@@ -146,7 +146,7 @@ class Status extends ActiveRecord
      */
     public function afterSave($insert, $changedAttributes)
     {
-        if (!$this->workflow->initial_status_id) {
+        if ($this->workflow && !$this->workflow->initial_status_id) {
             $this->workflow->initial_status_id = $this->id;
             $this->workflow->save(false, ['initial_status_id']);
         }
