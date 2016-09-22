@@ -157,7 +157,7 @@ class WorkflowDbSource extends Object implements IWorkflowSource
      */
     public function getStatus($id, $model = null)
     {
-        list($wId, $stId) = $this->parseStatusId($id);
+        list($wId, $stId) = $this->parseStatusId($id, $model);
         $canonicalStId = $wId . self::SEPARATOR_STATUS_NAME . $stId;
         if (!isset($this->_s[$wId])) {
             $this->_s[$wId] = [];
