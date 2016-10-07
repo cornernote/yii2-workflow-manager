@@ -23,7 +23,7 @@ class Module extends \yii\base\Module
         if (!isset(Yii::$app->i18n->translations['workflow'])) {
             Yii::$app->i18n->translations['workflow'] = [
                 'class' => 'yii\i18n\PhpMessageSource',
-                'sourceLanguage' => 'en',
+                'sourceLanguage' => 'en-US',
                 'basePath' => '@cornernote/workflow/manager/messages'
             ];
         }
