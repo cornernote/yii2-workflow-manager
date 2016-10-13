@@ -2,6 +2,8 @@
 
 namespace cornernote\workflow\manager;
 
+use Yii;
+
 /**
  * Class Module
  * @package cornernote\workflow\manager
