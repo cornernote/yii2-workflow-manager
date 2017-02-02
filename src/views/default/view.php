@@ -5,7 +5,7 @@
  */
 
 use cornernote\workflow\manager\models\Transition;
-use dmstr\helpers\Html;
+use yii\helpers\Html;
 use raoul2000\workflow\view\WorkflowViewWidget;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
