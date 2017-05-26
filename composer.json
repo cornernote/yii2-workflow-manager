@@ -13,6 +13,7 @@
     ],
     "require": {
         "yiisoft/yii2": "*",
+        "yiisoft/yii2-jui": "~2.0.0",
         "raoul2000/yii2-workflow": "*",
         "raoul2000/yii2-workflow-view": "*"
     },
