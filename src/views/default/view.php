@@ -61,7 +61,15 @@ $this->params['breadcrumbs'][] = $this->title;
             echo DetailView::widget([
                 'model' => $model,
                 'attributes' => [
-                    'id',
+                    [
+                        'attribute' => 'id',
+                        'value' => Html::tag('span', $model->id, ['class' => 'label label-default', 'style' => 'color:#fff;background:' . $model->getColor()]),
+                        'format' => 'raw',
+                    ],
+                    [
+                        'attribute' => 'color',
+                        'format' => 'raw',
+                    ],
                     [
                         'attribute' => 'initial_status_id',
                         'value' => $model->initial_status_id,
