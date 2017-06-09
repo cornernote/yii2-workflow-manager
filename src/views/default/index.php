@@ -29,6 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
         $items[] = [
             'label' => $workflow->id,
             'url' => ['view', 'id' => $workflow->id],
+            'linkOptions' => ['style' => 'color:#fff;background:' . $workflow->getColor()],
         ];
     }
     echo Nav::widget([
