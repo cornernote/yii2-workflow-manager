@@ -12,7 +12,7 @@ use raoul2000\workflow\base\WorkflowInterface;
 use raoul2000\workflow\source\IWorkflowSource;
 use Yii;
 use yii\base\InvalidConfigException;
-use yii\base\Object;
+use yii\base\BaseObject;
 use yii\caching\Cache;
 use yii\db\BaseActiveRecord;
 use yii\helpers\ArrayHelper;
@@ -32,7 +32,7 @@ use yii\helpers\VarDumper;
  * which are required by yii2-workflow.
  *
  */
-class WorkflowDbSource extends Object implements IWorkflowSource
+class WorkflowDbSource extends BaseObject implements IWorkflowSource
 {
     /**
      *    The regular expression used to validate status and workflow Ids.
