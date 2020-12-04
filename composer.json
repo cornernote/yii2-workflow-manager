@@ -1,5 +1,5 @@
 {
-    "name": "cornernote/yii2-workflow-manager",
+    "name": "victorsemenov/yii2-workflow-manager",
     "description": "Workflow Manager for Yii2.",
     "keywords": ["yii2", "workflow"],
     "type": "yii2-extension",
@@ -7,8 +7,7 @@
     "authors": [
         {
             "name": "Brett O'Donnell",
-            "email": "cornernote@gmail.com",
-            "homepage": "http://mrphp.com.au/"
+            "email": "victorvsemenow@gmail.com",
         }
     ],
     "require": {
@@ -22,6 +21,6 @@
         "scrutinizer/ocular": "~1.1"
     },
     "autoload": {
-        "psr-4": {"cornernote\\workflow\\manager\\": "src"}
+        "psr-4": {"victorsemenov\\workflow\\manager\\": "src"}
     }    
 }
