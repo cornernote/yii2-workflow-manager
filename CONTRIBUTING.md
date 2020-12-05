@@ -2,7 +2,7 @@
 
 Contributions are **welcome** and will be fully **credited**.
 
-We accept contributions via Pull Requests on [Github](https://github.com/cornernote/yii2-returnurl).
+We accept contributions via Pull Requests on [Github](https://github.com/victorsemenow/yii2-returnurl).
 
 
 ## Pull Requests

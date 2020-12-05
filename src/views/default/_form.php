@@ -1,7 +1,7 @@
 <?php
 /**
  * @var yii\web\View $this
- * @var cornernote\workflow\manager\models\Workflow $model
+ * @var victorsemenow\workflow\manager\models\Workflow $model
  * @var ActiveForm $form
  */
 

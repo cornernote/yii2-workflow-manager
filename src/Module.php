@@ -1,19 +1,19 @@
 <?php
 
-namespace cornernote\workflow\manager;
+namespace victorsemenow\workflow\manager;
 
 use Yii;
 
 /**
  * Class Module
- * @package cornernote\workflow\manager
+ * @package victorsemenow\workflow\manager
  */
 class Module extends \yii\base\Module
 {
     /**
      * @var string
      */
-    public $controllerNamespace = 'cornernote\workflow\manager\controllers';
+    public $controllerNamespace = 'victorsemenow\workflow\manager\controllers';
     /**
      * @var string
      */
@@ -26,7 +26,7 @@ class Module extends \yii\base\Module
             Yii::$app->i18n->translations['workflow'] = [
                 'class' => 'yii\i18n\PhpMessageSource',
                 'sourceLanguage' => 'en-US',
-                'basePath' => '@cornernote/workflow/manager/messages'
+                'basePath' => '@victorsemenow/workflow/manager/messages'
             ];
         }
     }

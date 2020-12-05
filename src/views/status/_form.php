@@ -1,11 +1,11 @@
 <?php
 /**
  * @var yii\web\View $this
- * @var cornernote\workflow\manager\models\form\StatusForm $model
+ * @var victorsemenow\workflow\manager\models\form\StatusForm $model
  * @var ActiveForm $form
  */
 
-use cornernote\workflow\manager\models\Metadata;
+use victorsemenow\workflow\manager\models\Metadata;
 use yii\bootstrap4\Html;
 use yii\bootstrap4\ActiveForm;
 use kartik\icons\Icon;

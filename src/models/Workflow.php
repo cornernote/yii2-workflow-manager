@@ -1,6 +1,6 @@
 <?php
 
-namespace cornernote\workflow\manager\models;
+namespace victorsemenow\workflow\manager\models;
 
 use Yii;
 use yii\db\ActiveRecord;

@@ -1,5 +1,5 @@
 <?php
-namespace cornernote\workflow\manager\components;
+namespace victorsemenow\workflow\manager\components;
 
 use raoul2000\workflow\base\SimpleWorkflowBehavior;
 use raoul2000\workflow\base\Status;
@@ -163,7 +163,7 @@ class WorkflowDbSource extends BaseObject implements IWorkflowSource
             $this->_s[$wId] = [];
         }
         if (!array_key_exists($canonicalStId, $this->_s[$wId])) {
-            $statusModel = \cornernote\workflow\manager\models\Status::findOne([
+            $statusModel = \victorsemenow\workflow\manager\models\Status::findOne([
                 'workflow_id' => $wId,
                 'id' => $stId
             ]);
@@ -190,8 +190,8 @@ class WorkflowDbSource extends BaseObject implements IWorkflowSource
     {
         if (empty($this->_allStatusLoaded[$workflowId])) {
             $this->_s[$workflowId] = [];
-            /** @var \cornernote\workflow\manager\models\Status[] $statusModels */
-            $statusModels = \cornernote\workflow\manager\models\Status::find()
+            /** @var \victorsemenow\workflow\manager\models\Status[] $statusModels */
+            $statusModels = \victorsemenow\workflow\manager\models\Status::find()
                 ->where(['workflow_id' => $workflowId])
                 //->andWhere(['NOT IN', 'id', array_keys($this->_s[$workflowId])]) // removed to fix sort order
                 ->orderBy(['sort_order' => SORT_ASC])
@@ -227,7 +227,7 @@ class WorkflowDbSource extends BaseObject implements IWorkflowSource
         }
         if (!array_key_exists($statusId, $this->_t[$wId])) {
             $transitions = [];
-            $transitionModels = \cornernote\workflow\manager\models\Transition::find()
+            $transitionModels = \victorsemenow\workflow\manager\models\Transition::find()
                 ->andWhere([
                     '{{%sw_transition}}.workflow_id' => $wId,
                     '{{%sw_transition}}.start_status_id' => $stId,
@@ -334,13 +334,13 @@ class WorkflowDbSource extends BaseObject implements IWorkflowSource
      * Loads the definition oa a workflow.
      *
      * @param string $id
-     * @return \cornernote\workflow\manager\models\Workflow
+     * @return \victorsemenow\workflow\manager\models\Workflow
      * @throws WorkflowException
      * @internal param IWorkflowSource $source
      */
     public function loadDefinition($id)
     {
-        $workflowModel = \cornernote\workflow\manager\models\Workflow::findOne(['id' => $id]);
+        $workflowModel = \victorsemenow\workflow\manager\models\Workflow::findOne(['id' => $id]);
         if (!$workflowModel) {
             return null;
             //throw new WorkflowException('No workflow found with id ' . $id);

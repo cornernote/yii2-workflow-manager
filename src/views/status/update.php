@@ -1,7 +1,7 @@
 <?php
 /**
  * @var yii\web\View $this
- * @var cornernote\workflow\manager\models\form\StatusForm $model
+ * @var victorsemenow\workflow\manager\models\form\StatusForm $model
  */
 
 use yii\bootstrap4\Html;
