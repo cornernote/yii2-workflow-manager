@@ -5,8 +5,9 @@
  * @var ActiveForm $form
  */
 
-use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
+use yii\bootstrap4\Html;
+use yii\bootstrap4\ActiveForm;
+use kartik\icons\Icon;
 ?>
 
 <div class="workflow-default-form">
@@ -20,8 +21,9 @@ use yii\bootstrap\ActiveForm;
     <?php echo $form->errorSummary($model); ?>
 
     <?= $form->field($model, 'id')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
 
-    <?= Html::submitButton('<span class="glyphicon glyphicon-check"></span> ' . ($model->isNewRecord ? Yii::t('workflow', 'Create') : Yii::t('workflow', 'Save')), [
+    <?= Html::submitButton(Icon::show('check') . ($model->isNewRecord ? Yii::t('workflow', 'Create') : Yii::t('workflow', 'Save')), [
         'id' => 'save-' . $model->formName(),
         'class' => 'btn btn-success'
     ]) ?>

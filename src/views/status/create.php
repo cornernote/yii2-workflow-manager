@@ -4,7 +4,7 @@
  * @var cornernote\workflow\manager\models\form\StatusForm $model
  */
 
-use yii\helpers\Html;
+use yii\bootstrap4\Html;
 
 $this->title = Yii::t('workflow', 'Create Status');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('workflow', 'Workflow'), 'url' => ['default/index']];

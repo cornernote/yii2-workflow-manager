@@ -5,7 +5,7 @@
  */
 
 use cornernote\workflow\manager\models\Transition;
-use yii\helpers\Html;
+use yii\bootstrap4\Html;
 use raoul2000\workflow\view\WorkflowViewWidget;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
@@ -13,6 +13,8 @@ use yii\helpers\Url;
 use yii\jui\Sortable;
 use yii\web\JsExpression;
 use yii\widgets\DetailView;
+use kartik\icons\FontAwesomeAsset;
+use kartik\icons\Icon;
 
 $this->title = $model->id;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('workflow', 'Workflow'), 'url' => ['index']];
@@ -22,9 +24,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1>
         <?= Html::encode($this->title) ?>
-        <div class="pull-right">
-            <?= Html::a('<span class="glyphicon glyphicon-pencil"></span> ' . Yii::t('workflow', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-info']) ?>
-            <?= Html::a('<span class="glyphicon glyphicon-trash"></span> ' . Yii::t('workflow', 'Delete'), ['delete', 'id' => $model->id], [
+        <div class="float-right">
+            <?= Html::a(Icon::show('pencil-alt'). ' ' . Yii::t('workflow', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-info']) ?>
+            <?= Html::a(Icon::show('trash-alt'). ' ' . Yii::t('workflow', 'Delete'), ['delete', 'id' => $model->id], [
                 'class' => 'btn btn-danger',
                 'data-confirm' => Yii::t('workflow', 'Are you sure?'),
                 'data-method' => 'post',
@@ -38,20 +40,20 @@ $this->params['breadcrumbs'][] = $this->title;
             $sortables = [];
             foreach ($model->statuses as $status) {
                 $actions = [];
-                $actions[] = '<span class="glyphicon glyphicon-move sortable-handle" style="cursor: move"></span>';
+                $actions[] = '<span style="cursor: move">'.Icon::show('sort').'</span>';
                 if ($model->initial_status_id != $status->id) {
-                    $actions[] = Html::a('<span class="glyphicon glyphicon-star"></span>', ['initial', 'id' => $model->id, 'status_id' => $status->id], ['title' => Yii::t('workflow', 'Set Initial')]);
+                    $actions[] = Html::a(Icon::show('star'), ['initial', 'id' => $model->id, 'status_id' => $status->id], ['title' => Yii::t('workflow', 'Set Initial')]);
                 }
-                $actions[] = Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['status/update', 'id' => $status->id, 'workflow_id' => $status->workflow_id], ['title' => Yii::t('workflow', 'Update')]);
-                $actions[] = Html::a('<span class="glyphicon glyphicon-trash"></span>', ['status/delete', 'id' => $status->id, 'workflow_id' => $status->workflow_id], [
+                $actions[] = Html::a(Icon::show('pencil-alt'), ['status/update', 'id' => $status->id, 'workflow_id' => $status->workflow_id], ['title' => Yii::t('workflow', 'Update')]);
+                $actions[] = Html::a(Icon::show('trash-alt'), ['status/delete', 'id' => $status->id, 'workflow_id' => $status->workflow_id], [
                     'title' => Yii::t('workflow', 'Delete'),
                     'data-confirm' => Yii::t('workflow', 'Are you sure?'),
                     'data-method' => 'post',
                 ]);
-                $transitions = $status->startTransitions ? '<br><small><span class="glyphicon glyphicon-chevron-right"></span>&nbsp; &nbsp;' . implode(', ', ArrayHelper::map($status->startTransitions, 'end_status_id', 'endName')) . '</small>' : '';
-                $metadatas = $status->metadatas ? '<br><small><span class="glyphicon glyphicon-tags"></span>&nbsp; &nbsp;' . Json::encode(ArrayHelper::map($status->metadatas, 'key', 'value')) . '</small>' : '';
+                $transitions = $status->startTransitions ? '<br><small>'.Icon::show('chevron-right') .'&nbsp; &nbsp;' . implode(', ', ArrayHelper::map($status->startTransitions, 'end_status_id', 'endName')) . '</small>' : '';
+                $metadatas = $status->metadatas ? '<br><small>'. Icon::show('tags').'&nbsp; &nbsp;' . Json::encode(ArrayHelper::map($status->metadatas, 'key', 'value')) . '</small>' : '';
                 $sortables[] = [
-                    'content' => '<div class="pull-right">' . implode(' ', $actions) . '</div>' . $status->name . $transitions . $metadatas,
+                    'content' => '<div class="float-right">' . implode(' ', $actions) . '</div>' . $status->name . $transitions . $metadatas,
                     'options' => [
                         'id' => 'Status_' . $status->id,
                         'class' => 'list-group-item',
@@ -88,7 +90,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     $.ajax({
                                         type: 'POST',
                                         url: '" . Url::to(['sort', 'id' => $model->id]) . "',
-                                        data: $(event.target).sortable('serialize') + '&_csrf=" . Yii::$app->request->getCsrfToken() . "',
+                                        data: $(event.target).sortable('serialize') + '&_csrf-backend=" . Yii::$app->request->getCsrfToken() . "',
                                         success: function() {
                                             location.reload();
                                         }

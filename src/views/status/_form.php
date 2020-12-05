@@ -6,8 +6,9 @@
  */
 
 use cornernote\workflow\manager\models\Metadata;
-use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
+use yii\bootstrap4\Html;
+use yii\bootstrap4\ActiveForm;
+use kartik\icons\Icon;
 
 ?>
 
@@ -31,7 +32,7 @@ use yii\bootstrap\ActiveForm;
         <legend><?= Yii::t('workflow', 'Metadata') ?>
             <?php
             // new metadata button
-            echo Html::a('<span class="glyphicon glyphicon-plus"></span> ' . Yii::t('workflow', 'New Metadata'), 'javascript:void(0);', [
+            echo Html::a(Icon::show('plus'). ' ' . Yii::t('workflow', 'New Metadata'), 'javascript:void(0);', [
                 'id' => 'status-new-metadata-button',
                 'class' => 'pull-right btn btn-default btn-xs'
             ])
@@ -90,11 +91,11 @@ use yii\bootstrap\ActiveForm;
 
     </fieldset>
 
-    <?= Html::submitButton('<span class="glyphicon glyphicon-check"></span> ' . ($model->status->isNewRecord ? Yii::t('workflow', 'Create') : Yii::t('workflow', 'Save')), [
+    <?= Html::submitButton(Icon::show('check'). ' ' . ($model->status->isNewRecord ? Yii::t('workflow', 'Create') : Yii::t('workflow', 'Save')), [
         'id' => 'save-' . $model->formName(),
         'class' => 'btn btn-success'
     ]) ?>
-    <?= Html::a(Yii::t('workflow', 'Cancel'), ['default/view', 'id' => $model->status->workflow_id], ['class' => 'btn btn-default']) ?>
+    <?= Html::a(Yii::t('workflow', 'Cancel'), ['default/view', 'id' => $model->status->workflow_id], ['class' => 'btn btn-light']) ?>
 
     <?php ActiveForm::end(); ?>
 

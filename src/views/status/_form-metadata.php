@@ -7,8 +7,9 @@
  * @var string $key
  */
 
-use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
+use yii\bootstrap4\Html;
+use yii\bootstrap4\ActiveForm;
+use kartik\icons\Icon;
 
 ?>
 
@@ -25,8 +26,8 @@ use yii\bootstrap\ActiveForm;
     ])->label(false) ?>
 </td>
 <td>
-    <?= Html::a('<span class="glyphicon glyphicon-remove"></span>', 'javascript:void(0);', [
-        'class' => 'status-remove-metadata-button btn btn-default btn-xs',
+    <?= Html::a(Icon::show('times'), 'javascript:void(0);', [
+        'class' => 'status-remove-metadata-button btn btn-light btn-xs',
         'title' => Yii::t('workflow', 'Remove {key}', ['key' => $key]),
     ]) ?>
 </td>

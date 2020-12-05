@@ -4,8 +4,9 @@
  */
 
 use cornernote\workflow\manager\models\Workflow;
-use yii\bootstrap\Nav;
-use yii\helpers\Html;
+use yii\bootstrap4\Nav;
+use yii\bootstrap4\Html;
+use kartik\icons\Icon;
 
 $this->title = Yii::t('workflow', 'Workflow');
 $this->params['breadcrumbs'][] = $this->title;
@@ -19,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php
     $items = [
         [
-            'label' => '<span class="glyphicon glyphicon-plus"></span> ' . Yii::t('workflow', 'Create'),
+            'label' => Icon::show('plus').' ' . Yii::t('workflow', 'Create'),
             'url' => ['create'],
             'encode' => false,
         ],
@@ -27,14 +28,14 @@ $this->params['breadcrumbs'][] = $this->title;
     foreach (Workflow::find()->orderBy(['id' => SORT_ASC])->all() as $workflow) {
         /** @var Workflow $workflow */
         $items[] = [
-            'label' => $workflow->id,
+            'label' => $workflow->title.' ('.$workflow->id.')',
             'url' => ['view', 'id' => $workflow->id],
             'linkOptions' => ['style' => 'color:#fff;background:' . $workflow->getColor()],
         ];
     }
     echo Nav::widget([
         'items' => $items,
-        'options' => ['class' => 'nav-pills'],
+        'options' => ['class' => 'nav nav-pills'],
     ]);
     ?>
 
