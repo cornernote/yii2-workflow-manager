@@ -6,15 +6,16 @@
     "license": "BSD-3-Clause",
     "authors": [
         {
-            "name": "Brett O'Donnell",
-            "email": "victorvsemenow@gmail.com",
+            "name": "Victor V. Semenov ",
+            "email": "victorvsemenow@gmail.com"
         }
     ],
     "require": {
         "yiisoft/yii2": "*",
         "yiisoft/yii2-jui": "~2.0.0",
         "raoul2000/yii2-workflow": "@dev",
-        "raoul2000/yii2-workflow-view": "@dev"
+        "raoul2000/yii2-workflow-view": "@dev",
+        "kartik-v/yii2-icons": "@dev"
     },
     "require-dev": {
         "phpunit/phpunit": "4.*",
