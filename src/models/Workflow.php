@@ -32,8 +32,8 @@ class Workflow extends ActiveRecord
     public function rules()
     {
         return [
-            [['id'], 'required'],
-            [['id', 'initial_status_id'], 'string', 'max' => 32],
+            [['id','title'], 'required'],
+            [['id', 'initial_status_id','title'], 'string', 'max' => 32],
             [['initial_status_id'], 'exist', 'skipOnError' => true, 'targetClass' => Status::className(), 'targetAttribute' => ['initial_status_id' => 'id']]
         ];
     }
@@ -46,6 +46,7 @@ class Workflow extends ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'initial_status_id' => Yii::t('app', 'Initial Status'),
+            'title' => Yii::t('app', 'Title'),
         ];
     }
 
@@ -54,7 +55,7 @@ class Workflow extends ActiveRecord
      */
     public function getStatuses()
     {
-        return $this->hasMany(Status::className(), ['workflow_id' => 'id'])->orderBy(['sort_order' => SORT_ASC]);
+        return $this->hasMany(Status::class, ['workflow_id' => 'id'])->orderBy(['sort_order' => SORT_ASC]);
     }
 
     /**
@@ -62,7 +63,7 @@ class Workflow extends ActiveRecord
      */
     public function getInitialStatus()
     {
-        return $this->hasOne(Status::className(), ['id' => 'initial_status_id']);
+        return $this->hasOne(Status::class, ['id' => 'initial_status_id']);
     }
 
     /**
@@ -70,7 +71,7 @@ class Workflow extends ActiveRecord
      */
     public function getTransitions()
     {
-        return $this->hasMany(Transition::className(), ['workflow_id' => 'id']);
+        return $this->hasMany(Transition::class, ['workflow_id' => 'id']);
     }
 
     /**
@@ -78,7 +79,7 @@ class Workflow extends ActiveRecord
      */
     public function getMetadatas()
     {
-        return $this->hasMany(Metadata::className(), ['workflow_id' => 'id']);
+        return $this->hasMany(Metadata::class, ['workflow_id' => 'id']);
     }
 
     /**
