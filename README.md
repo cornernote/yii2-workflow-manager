@@ -1,11 +1,11 @@
 # Yii2 Workflow Manager
 
-[![Latest Version](https://img.shields.io/github/tag/cornernote/yii2-workflow-manager.svg?style=flat-square&label=release)](https://github.com/cornernote/yii2-workflow-manager/tags)
+[![Latest Version](https://img.shields.io/github/tag/victorsemenow/yii2-workflow-manager.svg?style=flat-square&label=release)](https://github.com/victorsemenow/yii2-workflow-manager/tags)
 [![Software License](https://img.shields.io/badge/license-BSD-brightgreen.svg?style=flat-square)](LICENSE.md)
-[![Build Status](https://img.shields.io/travis/cornernote/yii2-workflow-manager/master.svg?style=flat-square)](https://travis-ci.org/cornernote/yii2-workflow-manager)
-[![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/cornernote/yii2-workflow-manager.svg?style=flat-square)](https://scrutinizer-ci.com/g/cornernote/yii2-workflow-manager/code-structure)
-[![Quality Score](https://img.shields.io/scrutinizer/g/cornernote/yii2-workflow-manager.svg?style=flat-square)](https://scrutinizer-ci.com/g/cornernote/yii2-workflow-manager)
-[![Total Downloads](https://img.shields.io/packagist/dt/cornernote/yii2-workflow-manager.svg?style=flat-square)](https://packagist.org/packages/cornernote/yii2-workflow-manager)
+[![Build Status](https://img.shields.io/travis/victorsemenow/yii2-workflow-manager/master.svg?style=flat-square)](https://travis-ci.org/victorsemenow/yii2-workflow-manager)
+[![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/victorsemenow/yii2-workflow-manager.svg?style=flat-square)](https://scrutinizer-ci.com/g/victorsemenow/yii2-workflow-manager/code-structure)
+[![Quality Score](https://img.shields.io/scrutinizer/g/victorsemenow/yii2-workflow-manager.svg?style=flat-square)](https://scrutinizer-ci.com/g/victorsemenow/yii2-workflow-manager)
+[![Total Downloads](https://img.shields.io/packagist/dt/victorsemenow/yii2-workflow-manager.svg?style=flat-square)](https://packagist.org/packages/victorsemenow/yii2-workflow-manager)
 
 Workflow Manager for Yii2. Extends [Yii2-Workflow](https://github.com/raoul2000/yii2-workflow/) to provide an interface to manage workflows.
 
@@ -26,13 +26,13 @@ The preferred way to install this extension is through [composer](http://getcomp
 Either run
 
 ```
-$ composer require cornernote/yii2-workflow-manager "*"
+$ composer require victorsemenow/yii2-workflow-manager "*"
 ```
 
 or add
 
 ```
-"cornernote/yii2-workflow-manager": "*"
+"victorsemenow/yii2-workflow-manager": "*"
 ```
 
 to the `require` section of your `composer.json` file.
@@ -41,7 +41,7 @@ to the `require` section of your `composer.json` file.
 ## Migrations
 
 ```
-$ php yii migrate --migrationPath=@cornernote/workflow/manager/migrations
+$ php yii migrate --migrationPath=@victorsemenow/workflow/manager/migrations
 ```
 
 
@@ -51,12 +51,12 @@ $ php yii migrate --migrationPath=@cornernote/workflow/manager/migrations
 $config = [
     'components' => [
         'workflowSource' => [
-            'class' => 'cornernote\workflow\manager\components\WorkflowDbSource',
+            'class' => 'victorsemenow\workflow\manager\components\WorkflowDbSource',
         ],
     ],
     'modules' => [
         'workflow' => [
-            'class' => 'cornernote\workflow\manager\Module',
+            'class' => 'victorsemenow\workflow\manager\Module',
         ],
     ],
 ];
@@ -89,16 +89,16 @@ class Post extends \yii\db\ActiveRecord
 ## License
 
 - Author: Brett O'Donnell <cornernote@gmail.com>
-- Source Code: https://github.com/cornernote/yii2-workflow-manager
+- Source Code: https://github.com/victorsemenow/yii2-workflow-manager
 - Copyright © 2016 Mr PHP <info@mrphp.com.au>
-- License: BSD-3-Clause https://raw.github.com/cornernote/yii2-workflow-manager/master/LICENSE
+- License: BSD-3-Clause https://raw.github.com/victorsemenow/yii2-workflow-manager/master/LICENSE
 
 
 ## Links
 
 - [Yii2 Extension](http://www.yiiframework.com/extension/yii2-workflow-manager)
-- [Composer Package](https://packagist.org/packages/cornernote/yii2-workflow-manager)
+- [Composer Package](https://packagist.org/packages/victorsemenow/yii2-workflow-manager)
 - [MrPHP](http://mrphp.com.au)
 
 
-[![Mr PHP](https://raw.github.com/cornernote/mrphp-assets/master/img/code-banner.png)](http://mrphp.com.au) 
+[![Mr PHP](https://raw.github.com/victorsemenow/mrphp-assets/master/img/code-banner.png)](http://mrphp.com.au) 
